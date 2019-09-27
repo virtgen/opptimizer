@@ -1,0 +1,5 @@
+
+CC=gcc
+#PLATFORM=linux64
+PLATFORM=macos
+#PLATFORM=win64
