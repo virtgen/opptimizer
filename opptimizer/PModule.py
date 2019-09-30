@@ -68,7 +68,7 @@ class PModule:
 
     def resultFileOpen(self):
         if (self.getResultFilePath() != None):
-            self.resultFile = PLog('ResultFile', self.getResultFilePath())
+            self.resultFile = PPath(self.getResultFilePath(), "ResultFile", 'resultFile')
             self.resultFile.open(True)
         else:
             print("PModule.resulFiletOpen() ERR: log not initialized due to lack of path")
@@ -79,7 +79,7 @@ class PModule:
 
     def writeToResultFile(self, resultStr):
         if self.resultFile != None:
-            self.resultFile.dbg(resultStr)
+            self.resultFile.write(resultStr)
 
 
     def setLogFileName(self, logFileName):

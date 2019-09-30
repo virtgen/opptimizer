@@ -32,11 +32,17 @@ class PExecutor:
         self.execLog = None
         self.testlistLog = None
         self.resultFilePath = None
+        self.execDir = PPath()
+        self.testExecDir = PPath()
         
         return
     
     def version(self):
         return 'e'+ str(OPEXECUTE_VER)
+    
+    def dbgl(self, textToWrite):
+        if self.execLog != None and self.execLog.isOpened():
+            self.execLog.dbgl(textToWrite)
     
     def execute(self, command, context, params, *paramRange):
         result = None
@@ -60,7 +66,7 @@ class PExecutor:
         self.initLogFiles(rootDir, execDir, testListDir)
         
         if not self.session_started:
-            self.summaryLog.dbgl('TestEngineVersion=' + self.version())
+            self.summaryLog.writeAsAppendLine('TestEngineVersion=' + self.version() + ';', True)
             self.session_started = True
             
         dataDir = oppval(P_KEY_DATADIR, params)
@@ -90,13 +96,13 @@ class PExecutor:
                 
         rootSummary = oppsum(rootSummary, oppRange(str(paramRange)))
     
-        self.summaryLog.dbgl(rootSummary)
+        self.summaryLog.write(rootSummary)
         
-        self.execLog.dbgl(oppOut(getExecDirShortName(execDir)))
+        self.dbgl(oppOut(getExecDirShortName(execDir)))
         
         inResultFile = oppval(P_KEY_IN, params)
         if DBG_REF_TEST:
-            self.execLog.dbgl("<ref-test>in param: " + str(inResultFile))
+            self.dbgl("<ref-test>in param: " + str(inResultFile))
             
         
         if command ==P_KEY_TEST:
@@ -106,23 +112,23 @@ class PExecutor:
             if (inResultFile != None):
                 inResultFile += '/' + P_RESULT_FILENAME
                 if DBG_REF_TEST:
-                    self.execLog.dbgl("<ref-test>inResultFile:" + inResultFile)
+                    self.dbgl("<ref-test>inResultFile:" + inResultFile)
                 summaryText =  oppsum(summaryText, opp(P_KEY_IN, inResultFile))
                 
                 lines = getFileLines(inResultFile)
                 if DBG_REF_TEST:
-                    self.execLog.dbgl("<ref-test>read " + str(len(lines)) + ' lines from result file')
+                    self.dbgl("<ref-test>read " + str(len(lines)) + ' lines from result file')
                 param_lines = []
                 #if (learningToDo):
                 for l in lines:
                     param_l = oppmodify(l, oppemptyvals(P_KEY_TESTNAME, KEY_ACCURACY, KEY_PRECISION,KEY_RECALL, KEY_FALLOUT))
                     param_lines.append(param_l)
                     if DBG_REF_TEST:
-                        self.execLog.dbgl("<ref-test>applied:"+ l)
-                        self.execLog.dbgl("<ref-test>cleaned:"+ param_l)
+                        self.dbgl("<ref-test>applied:"+ l)
+                        self.dbgl("<ref-test>cleaned:"+ param_l)
                 #else:
                 #    param_lines = lines
-                self.execLog.dbgl('PARAM_LINES: ' + str(param_lines))
+                self.dbgl('PARAM_LINES: ' + str(param_lines))
             else:
                 param_lines.append('')
             
@@ -134,7 +140,7 @@ class PExecutor:
     
             summaryText = oppsum(summaryText, '\n' + oppRange(str(paramRange)))
             
-            self.execLog.dbgl(summaryText)
+            self.dbgl(summaryText)
             
             
             finalCaseList = []
@@ -169,7 +175,7 @@ class PExecutor:
                 #limit conditional modules to those defined to run in context
                 condMods = self.cleanCondMods(condMods, context)
                 
-                self.execLog.dbgl("Clean condMods: " + str(condMods))
+                self.dbgl("Clean condMods: " + str(condMods))
                 
                 if paramRange[0] != None:
                     
@@ -179,12 +185,12 @@ class PExecutor:
                     newAcceptOpp = opplist("acceptMods", *condMods)
                     newConsOpp = oppmodify(newConsOpp, newAcceptOpp)
                     
-                    self.execLog.dbgl("CONST " + newConsOpp)
+                    self.dbgl("CONST " + newConsOpp)
                     
                     caseTree = self.buildCaseTree(test_params, condMods, newConsOpp, paramRange)
-                    self.execLog.dbgl("====================")
+                    self.dbgl("====================")
                     for case in caseTree:
-                        self.execLog.dbgl(case)
+                        self.dbgl(case)
                 else:
                     #if (prepareDataNeeded):
                     #    test_params = oppmodify(test_params,opp(KEY_PREPAREDATA,'1'))
@@ -215,8 +221,8 @@ class PExecutor:
             finalCaseList = self.prepareChain(finalCaseList)
             for c in finalCaseList:
                 print c
-                self.testlistLog.dbgl(c, True)
-                self.execLog.dbgl(opp(P_KEY_TESTNAME, oppval(P_KEY_TESTNAME, c)) + '\n')
+                self.testlistLog.writeAsAppendLine(c, True)
+                self.dbgl(opp(P_KEY_TESTNAME, oppval(P_KEY_TESTNAME, c)) + '\n')
             
             
             result = self.executeChain(execDir, context, finalCaseList)
@@ -225,26 +231,26 @@ class PExecutor:
             if (inResultFile != None):
                 inResultFile += '/' + P_RESULT_FILENAME
                 #print 'INIT-FILE',inResultFile
-                self.execLog.dbgl(oppsum(oppCommand(command),opp(P_KEY_IN, inResultFile)))
+                self.dbgl(oppsum(oppCommand(command),opp(P_KEY_IN, inResultFile)))
                 plots = []
                             #print "paramRange",paramRange
                 
                 if DBG_RESULT:
-                    self.execLog.dbgl("<result>paramRange:" + str(paramRange))
+                    self.dbgl("<result>paramRange:" + str(paramRange))
                     
                 for p in paramRange:
                     #print 'plot',p
                     plots.append(p)
-                    self.execLog.dbgl(p)
+                    self.dbgl(p)
                 plots = preparePlots(plots, inResultFile)
                 
                 if DBG_RESULT:
-                    self.execLog.dbgl("<result>plots:" + str(plots))
+                    self.dbgl("<result>plots:" + str(plots))
                 
                 if command == P_KEY_FILTER:
                     newResultFile = execDir + '/' + P_RESULT_FILENAME
                     if DBG_RESULT:
-                        self.execLog.dbgl("<result>new resultFile:" + newResultFile)
+                        self.dbgl("<result>new resultFile:" + newResultFile)
                     saveResultToFile(newResultFile)
                 elif command == KEY_PLOT:
                     displayPlots(plots)
@@ -289,7 +295,7 @@ class PExecutor:
             test = PTest(test_name, context, testParams)
             test.setExecDir(execDir)
             
-            self.execLog.dbgl('Execute ' +  test_name)
+            self.dbgl('Execute ' +  test_name)
             
     
             #medlearn.learnInit(test)
@@ -297,7 +303,7 @@ class PExecutor:
             prepareData = oppval('PrepareData', testParams)
     
             if (prepareData == '1'):
-                self.execLog.dbgl("executeChain: PrepareData is 1 !!!")
+                self.dbgl("executeChain: PrepareData is 1 !!!")
                 #itkServiceSocket = connectToServiceITK()
                 #itkServiceSocket.send(test)
     
@@ -315,7 +321,10 @@ class PExecutor:
                 testExecDir = execDir
             else:
                 testExecDir = execDir +  P_DIR_SEP + test_name
-                self.createTestDir(testExecDir)
+                self.dbgl('Create exec dir for test: ' + testExecDir)
+                self.testExecDir.setPath(testExecDir)
+                self.testExecDir.createDirIfNone()
+                
                 
             contextForModules = oppmodify(context, opp('testExecDir', testExecDir))
             contextForModules = oppmodify(contextForModules, opp("resultFilePath", self.resultFilePath))
@@ -330,10 +339,10 @@ class PExecutor:
                     for mod in modules:
                         if (mod != ''):
                             if (not mod in condMods) or (mod in acceptMods): 
-                                self.execLog.dbgl("RUN module:" + mod)
-                                self.execLog.dbgl("cwd:" + os.getcwd())
+                                self.dbgl("RUN module:" + mod)
+                                self.dbgl("cwd:" + os.getcwd())
                                 module_exec_dir = "../../modules/" + mod + "/"
-                                self.execLog.dbgl("module_exec_dir:" + module_exec_dir)
+                                self.dbgl("module_exec_dir:" + module_exec_dir)
                                 #mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
                                 mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
                                 print("mod_y============== will call getModule()")
@@ -342,26 +351,18 @@ class PExecutor:
                                 test.addModule(module)
                                 tokenData =  module.execute(testParams, tokenData)
                             else:
-                                self.execLog.dbgl('Module ' + mod + 'SKIPPED')
+                                self.dbgl('Module ' + mod + 'SKIPPED')
                         else:
-                            self.execLog.dbgl("executeChain: empty module name. SKIPPED")
+                            self.dbgl("executeChain: empty module name. SKIPPED")
                 else:
-                    self.execLog.dbgl("executeChain: Empty list of modules. Nothing to do.")   
+                    self.dbgl("executeChain: Empty list of modules. Nothing to do.")   
             else:
-                self.execLog.dbgl("executeChain: modules to run not defined")
+                self.dbgl("executeChain: modules to run not defined")
           
         return test    
   
             #TODO uncomment
             #_TIME_dump('totalChainExecution',_TIME_totalChainExecution)  
-
-    def createTestDir(self, testDir):
-        
-        if (not os.path.isdir(testDir)):
-            self.execLog.dbgl('create test dir: ' + testDir)
-            os.mkdir(testDir)
-        else:
-            self.execLog.dbgl(testDir + ' already exists, creation skipped.')
     
     #returns hanles to files [rootDirHandle, execDirHandle]
     def initLogFiles(self, rootDir, execDir, testListDir):
@@ -370,13 +371,13 @@ class PExecutor:
         execSummaryFileName = execDir + '/' + P_EXEC_FILENAME
         testListFileName = execDir + '/' + P_TESTLIST_FILENAME
         
-        self.summaryLog = PLog("summary", rootSummaryFileName)
+        self.summaryLog = PPath(rootSummaryFileName, "summaryFile" "summary")
         self.summaryLog.open(True)
-        self.execLog = PLog("exec", execSummaryFileName)
+        self.execLog = PLog("ex", execSummaryFileName)
         self.execLog.open()
 
         if (testListDir != None):
-            self.testlistLog = PLog("result", testListFileName)
+            self.testlistLog = PPath(testListFileName, "testListFile", "testList")
             self.testlistLog.open()
         
         self.resultFilePath = execDir + '/' + P_RESULT_FILENAME
@@ -414,8 +415,8 @@ class PExecutor:
     
         resultSubTree = []
         if DBG_BUILD_CASE_TREE:
-            self.execLog.dbgl('----------- ') 
-            self.execLog.dbgl(str(paramRange))
+            self.dbgl('----------- ') 
+            self.dbgl(str(paramRange))
             
         if (len(paramRange) > 0):
             
@@ -438,7 +439,7 @@ class PExecutor:
             caseInd = 0
             for valCase in currCase[1:]:
                 if DBG_BUILD_CASE_TREE:
-                    self.execLog.dbgl('valcase:' +  str(valCase) + ' caseInd ' + str(caseInd))
+                    self.dbgl('valcase:' +  str(valCase) + ' caseInd ' + str(caseInd))
                 newConsOpp = oppsum(constOpp, opp(currCase[0], valCase))
                 
                 #if (valCase == currCase[1] and prepareData):
@@ -455,7 +456,7 @@ class PExecutor:
                             acceptMods.append(condMod)
                             
                 if DBG_BUILD_CASE_TREE:
-                    self.execLog.dbgl('new acceptMods:' + str(acceptMods))
+                    self.dbgl('new acceptMods:' + str(acceptMods))
                     
                 newAcceptOpp = opplist("acceptMods", *acceptMods)
                 newConsOpp = oppmodify(newConsOpp, newAcceptOpp)

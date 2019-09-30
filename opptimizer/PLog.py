@@ -12,11 +12,13 @@ DBG_MEDIUM_LEVEL = 2
 DBG_HIGH_LEVEL = 3
 
 class PLog(PPath):
-    def __init__(self, name, path = None):
-        PPath.__init__(self,name)
+    def __init__(self, name = "", path = None, oppKey = None):
+        PPath.__init__(self, path, oppKey, name)
         self.active = False
         self.LEVEL = DBG_LOW_LEVEL
         self.flush = False
+        self.addPrefix = True  #flag if prefix ([self.name]) should be added to log
+        
         
         self.setActive(True)
         if (path != None):
@@ -34,13 +36,18 @@ class PLog(PPath):
     
     def isActive(self):
         return self.active
-            
+    
+    def getPrefix(self):
+        if self.addPrefix:
+            return '[' + self.name + ']'
+    
     # Prints regular log
     def dbg(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
         if self.isActive() and dbgLevel >= self.LEVEL:
-            oppdbg(object_to_write)
+            textToWrite = self.getPrefix() + object_to_write
+            oppdbg(textToWrite)
             if self.isOpened():
-                self.write(object_to_write, self.flush)
+                self.write(textToWrite, self.flush)
                 
     def dbgl(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
         object_to_write += '\n'
@@ -49,8 +56,8 @@ class PLog(PPath):
     # Prints WARNING log (as string)
     def wrn(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
         if self.isActive() and dbgLevel >= self.LEVEL:
-            textToWrite = WARN_KEY + ':' + object_to_write 
-            oppdbg(WARN_KEY + textToWrite)
+            textToWrite = WARN_KEY + self.getPrefix() + ':' + object_to_write 
+            oppdbg(textToWrite)
             if self.isOpened():
                 self.write(textToWrite, self.flush)
                 
@@ -61,8 +68,8 @@ class PLog(PPath):
     # Prints ERROR log (as string)
     def err(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
         if self.isActive() and dbgLevel >= self.LEVEL:
-            textToWrite = WARN_KEY + ':' + object_to_write 
-            oppdbg(ERROR_KEY + textToWrite)
+            textToWrite = ERROR_KEY + self.getPrefix() + ':' + object_to_write 
+            oppdbg(textToWrite)
             if self.isOpened():
                 self.write(textToWrite, self.flush)
                 

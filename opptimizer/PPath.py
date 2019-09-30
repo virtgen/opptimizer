@@ -6,19 +6,14 @@ import os
 import shutil
 from putils import *
 from pcons import *
+from PObject import *
 
-class PPath:
-        def __init__(self, name, path = None):
-            self.name = name
+class PPath(PObject):
+        def __init__(self, path = None, oppKey = None, name = ""):
+            PObject.__init__(self, oppKey, name)
             self.path = path
             self.file = None
     
-        def setName(self, name):
-            self.name = name
-            
-        def getName(self):
-            return self.name   
-     
         def setPath(self, path):
             if (self.file != None):
                 oppdbg(WARN_KEY + ':PPath(' + self.name  + ").setPath: path cannot be changed for opened log (operation not done), existing path:" 
@@ -76,7 +71,7 @@ class PPath:
                     result = False
             return result 
         
-        def write(self, object_to_write, flush):
+        def write(self, object_to_write, flush = False):
             if self.file != None:
                 self.file.write(object_to_write)
                 if flush:
@@ -84,7 +79,12 @@ class PPath:
             else:
                 oppdbg(WARN_KEY + ':PPath(' + self.name  + ").write(): file not open, path:"
                        + self.path + "\n")
-        
+        # Writes to file as new line
+        def writeAsAppendLine(self, object_to_write, flush = False):
+            if not self.isEmpty():
+                self.write('\n')
+            self.write(object_to_write, flush)    
+                
         def close(self):
             if self.file != None:
                 self.file.close()

@@ -1,3 +1,4 @@
+from PObject import PObject
 from PExecutor import PExecutor
 from PTest import PTest
 #from PResult import PResult
