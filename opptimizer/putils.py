@@ -5,6 +5,8 @@
 
 MEDBASE_VER = 1
 
+_PRINT_LOG_ENABLED = True
+
 def medbaseversion():
     return 'b' + str(MEDBASE_VER)
                      
@@ -19,3 +21,8 @@ def overrides(interface_class):
         assert(method.__name__ in dir(interface_class))
         return method
     return overrider
+
+# prints the object on standard output
+def oppdbg(object_to_write):
+    if _PRINT_LOG_ENABLED:
+        print(object_to_write)

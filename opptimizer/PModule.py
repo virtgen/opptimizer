@@ -43,14 +43,17 @@ class PModule:
     
     def setSkipExe(self, val):
         self.skipExe = val
-	
-    def dbg(self, txt, flush = False):
-        if self.logFile != None:
-           self.logFile.dbg(txt, flush)
 
-    def dbgl(self, txt, flush = False):
+    
+    #####  FILES (log/data)  INTERFACE  ################
+    
+    def dbg(self, txt, dbgLevel = 1):
         if self.logFile != None:
-            self.logFile.dbgl(txt, flush)
+            self.logFile.dbg(txt, dbgLevel)
+
+    def dbgl(self, txt, dbgLevel = 1):
+        if self.logFile != None:
+            self.logFile.dbgl(txt, dbgLevel)
 
     def dbgopen(self):
         if (self.logFileName != None):
@@ -101,7 +104,12 @@ class PModule:
             
     def getLog(self):
         return self.logFile
-            
+    
+    #####  END of FILES (log/data)  INTERFACE  ################
+    
+    
+    
+    
     def setExecresult(self, execResult):
         self.exec_result = execResult
         

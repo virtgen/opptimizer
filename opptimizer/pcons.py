@@ -10,6 +10,9 @@ MED_VER = 5
 def medversion():
     return 'm' + str(MED_VER)
 
+WARN_KEY = 'WARN:'
+ERROR_KEY = 'ERR:'
+
 P_DIR_SEP = '/'
 P_UP_DIR = '..' + P_DIR_SEP
 

@@ -2,78 +2,71 @@
 
 # opPtimizer: optimization framework for AI   
 # Copyright (c) 2019 Artur Bak
-import os
 
-class PLog:
+from PPath import *
+from putils import *
+
+DBG_NODEBUG_LEVEL = 0
+DBG_LOW_LEVEL = 1
+DBG_MEDIUM_LEVEL = 2
+DBG_HIGH_LEVEL = 3
+
+class PLog(PPath):
     def __init__(self, name, path = None):
-        self.name = name
-        self.path = None
+        PPath.__init__(self,name)
         self.active = False
-        self.logFile = None
+        self.LEVEL = DBG_LOW_LEVEL
+        self.flush = False
         
         self.setActive(True)
         if (path != None):
             self.setPath(path)
         return
     
-    def setPath(self, path):
-        self.path = path
-        if (path == None and self.logFile != None):
-            print("PLog.setPath() ERR: path cannot be None foe opened log("
-                  + self.name + "):" + self.path)
-        else:
-            self.path = path
+    def setFlush(self, flush=True):
+        self.flush = flush
     
-    def getPath(self):
-        return self.path
+    def getFlush(self):
+        return self.flush
     
     def setActive(self, active):
         self.active = active
     
     def isActive(self):
         return self.active
-    
-    def open(self, append = False):
-        if (self.path != None):
-            if append:
-                mode = 'a'
-            else:
-                mode = 'w'
-                
-            self.logFile = open(self.path, mode)
-        else:
-            print("PLog.open() ERR: no path specified for log " + self.name)
             
-    def isOpened(self):
-        return self.logFile != None 
-    
-    def isEmpty(self):
-        result = True
-        if self.isOpened():
-            if os.path.getsize(self.path) > 0:
-                result = False
-        return result 
-        
-    
-    def close(self):
-        if self.logFile != None:
-            self.logFile.close()
-            self.logFile = None
-                        
-    def dbg(self, object_to_write, flush = False):
-        
-        if self.isActive():
-            print(object_to_write)
-            if self.logFile != None:
-                self.logFile.write(object_to_write)
-                if flush:
-                    self.logFile.flush()
+    # Prints regular log
+    def dbg(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
+        if self.isActive() and dbgLevel >= self.LEVEL:
+            oppdbg(object_to_write)
+            if self.isOpened():
+                self.write(object_to_write, self.flush)
+                
+    def dbgl(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
+        object_to_write += '\n'
+        self.dbg(object_to_write, dbgLevel)
 
-    def dbgl(self, object_to_write, flush = False):
-        self.dbg(object_to_write, flush)
-        print ("")
-        if self.logFile != None:
-            self.logFile.write('\n')
-            if flush:
-                self.logFile.flush()
+    # Prints WARNING log (as string)
+    def wrn(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
+        if self.isActive() and dbgLevel >= self.LEVEL:
+            textToWrite = WARN_KEY + ':' + object_to_write 
+            oppdbg(WARN_KEY + textToWrite)
+            if self.isOpened():
+                self.write(textToWrite, self.flush)
+                
+    def wrnl(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
+        object_to_write += '\n'
+        self.wrn(object_to_write, dbgLevel)
+    
+    # Prints ERROR log (as string)
+    def err(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
+        if self.isActive() and dbgLevel >= self.LEVEL:
+            textToWrite = WARN_KEY + ':' + object_to_write 
+            oppdbg(ERROR_KEY + textToWrite)
+            if self.isOpened():
+                self.write(textToWrite, self.flush)
+                
+    def errl(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
+        object_to_write += '\n'
+        self.err(object_to_write, dbgLevel)
            
