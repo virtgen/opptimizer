@@ -1,3 +1,4 @@
+#configuration file for optimizer
 
 INPUT_DIR="$ROOT/input"
 OUTPUT_DIR="$ROOT/_out"
