@@ -22,9 +22,15 @@ class YourModuleClass(PModulePy):
     def execute(self, params, tokenData = None):
 
         tokenData = PModule.execute(self, params)
-        self.initLogFiles()
+
+        self.dbgopen()
+        self.dbgl("will be writting to result:")
+        
+        self.resultFileOpen()
         self.writeToResultFile(opp('precision', '0.75'))
-        self.closeLogFiles()
+        self.resultFileClose()
+        
+        self.dbgclose()
     
         return tokenData
 

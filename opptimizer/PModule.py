@@ -93,14 +93,6 @@ class PModule:
             
     def getResultFilePath(self):
         return self.resultFilePath
-        
-    def initLogFiles(self):
-        self.dbgopen()
-        self.resultFileOpen()
-
-    def closeLogFiles(self):
-        self.dbgclose()
-        self.resultFileClose()
             
     def getLog(self):
         return self.logFile
