@@ -23,7 +23,7 @@ if [ "$1" == "mod" -o "$1" == "script" ]; then
    if [ ! "$2" == "" ]; then
       if [ -d "$DIR/$2" ]; then
          cd $DIR/$2
-         python $2.py $2 $3 $4 
+         $PYTHON_INTERPRETER $2.py $2 $3 $4 
          cd $ROOT
       else
           echo "Error: $2 not found."

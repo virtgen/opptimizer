@@ -5,7 +5,6 @@
 
 # Base class for optimizer objects
 
-from pcons import *
 
 class PObject():
     def __init__(self, oppKey = None, name = ""):

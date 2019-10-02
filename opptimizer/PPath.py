@@ -4,9 +4,9 @@
 # Copyright (c) 2019 Artur Bak
 import os
 import shutil
-from putils import *
-from pcons import *
-from PObject import *
+from .putils import *
+from .pcons import *
+from .PObject import *
 
 class PPath(PObject):
         def __init__(self, path = None, oppKey = None, name = ""):

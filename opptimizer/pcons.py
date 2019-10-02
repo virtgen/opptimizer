@@ -3,7 +3,7 @@
 # opPtimizer: optimization framework for AI   
 # Copyright (c) 2019 Artur Bak
 
-from opp import *
+#from opp import *
 
 MED_VER = 5
 

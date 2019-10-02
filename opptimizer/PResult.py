@@ -6,8 +6,8 @@
 import sys
 import time
 import os
-from opp import *
-from putils import *
+from .opp import *
+from .putils import *
 #import pylab as pl
 #import matplotlib
 #matplotlib.use('GTK')
@@ -40,11 +40,10 @@ RESULT_VERSION = 3
 
 class PResult:
     def __init__(self):
-        
         return
-   
-	def version():
-		return 'r' + str(RESULT_VERSION)
+
+    def version():
+        return 'r' + str(RESULT_VERSION)
 
 def resetPlots():
 	global tests,line_number,main_plot,plot_x_line,plot_y_line,plot_test_line,plot_table,figure
@@ -82,7 +81,7 @@ def highlightClosestTest(x,y):
 		test_ind = len(tests) - 1
 		test_x = tests[test_ind][0]
 		
-	print 'Pointer x', x, ' test ',  test_x, ' ind ', test_ind, 'len', len(tests)
+	print('Pointer x', x, ' test ',  test_x, ' ind ', test_ind, 'len', len(tests))
 	if (test_x > -1):	
 		plot_test_line = main_plot.plot([test_x, test_x], [0,1], color='yellow')
 		table_vals=[]
@@ -93,7 +92,7 @@ def highlightClosestTest(x,y):
 			if len(value) > 20:
 				value = value[:20] + '...'
 			table_vals.append([value])
-		print 'TABLE-VALS:', table_vals
+		print('TABLE-VALS:', table_vals)
 		# the rectangle is where I want to place the table
 		plot_table = main_plot.table(cellText=table_vals,
 		                  colWidths = [0.1]*3,
@@ -110,7 +109,7 @@ def onPress(event):
     
     x = event.xdata
     y = event.ydata
-    print x, y
+    print(x, y)
     highlightClosestTest(x,y)
     plot_x_line = main_plot.plot([0,line_number], [y,y], color='red')
     plot_y_line = main_plot.plot([x,x], [0,1], color='red')
@@ -120,7 +119,7 @@ def onPress(event):
         main_plot.draw_artist(plot_test_line[0])
 	
     if not FAKE_PLOT:
-	   pl.draw()	
+        pl.draw()	
 
 def onRelease(event):
     global main_plot, plot_x_line, plot_y_line, plot_test_line
@@ -131,7 +130,7 @@ def onRelease(event):
     	plot_table.remove()
 	
     if not FAKE_PLOT:
-	   pl.draw()
+        pl.draw()
 
 def resetTests():
 	global tests
@@ -163,7 +162,7 @@ def readResultFile(plots, fileName):
 	global tests, line_number
 	
 	lines = getFileLines(fileName)
-	print lines
+	print(lines)
 	line_number = 0
 
 	for line in lines:
@@ -198,33 +197,33 @@ def startPlots(plots):
 
     if FAKE_PLOT:
         return
-	figure = pl.figure()
-	main_plot = figure.add_subplot(111)
+    figure = pl.figure()
+    main_plot = figure.add_subplot(111)
 	
-	figure.canvas.mpl_connect('button_press_event', onPress)
-	figure.canvas.mpl_connect('button_release_event', onRelease)
-	
-	#bounding box for plots
-	main_plot.plot([0,line_number], [1,1], color="gray")
-	main_plot.plot([0,line_number], [0,0], color="gray")
-	main_plot.plot([0,0], [0,1], color="gray")
-	main_plot.plot([line_number,line_number], [0,1], color="gray")
-
-	
-	indexes = [pair[0] for pair in tests]
-	
-	for plot in plots:
-		if plot[PLOT_DISPLAY_IND] == '1':
-			main_plot.plot(indexes, plot[PLOT_VAL_IND], 'b-o',  color=plot[PLOT_COLOR_IND], label=plot[PLOT_LABEL_IND])
-
-	main_plot.legend( loc='upper right', numpoints = 1, fancybox=True )
-	main_plot.set_ylim([0, 1.4])
-	pl.xlabel('Test cases')
-	pl.ylabel('Evaluation normalized to [0-1]')
-	figure.suptitle('Medusa viewer for Bone-Skin detector results v1.0')
-	pl.grid()
-
-	pl.show()
+    figure.canvas.mpl_connect('button_press_event', onPress)
+    figure.canvas.mpl_connect('button_release_event', onRelease)
+    
+    #bounding box for plots
+    main_plot.plot([0,line_number], [1,1], color="gray")
+    main_plot.plot([0,line_number], [0,0], color="gray")
+    main_plot.plot([0,0], [0,1], color="gray")
+    main_plot.plot([line_number,line_number], [0,1], color="gray")
+    
+    
+    indexes = [pair[0] for pair in tests]
+    
+    for plot in plots:
+    	if plot[PLOT_DISPLAY_IND] == '1':
+    		main_plot.plot(indexes, plot[PLOT_VAL_IND], 'b-o',  color=plot[PLOT_COLOR_IND], label=plot[PLOT_LABEL_IND])
+    
+    main_plot.legend( loc='upper right', numpoints = 1, fancybox=True )
+    main_plot.set_ylim([0, 1.4])
+    pl.xlabel('Test cases')
+    pl.ylabel('Evaluation normalized to [0-1]')
+    figure.suptitle('Medusa viewer for Bone-Skin detector results v1.0')
+    pl.grid()
+    
+    pl.show()
 	
 def releasePlots():
 	global figure
@@ -273,7 +272,7 @@ def	preparePlots(plots, resultFile):
 
 def displayPlots(plots):
 	startPlots(plots)  #blocks on show()
-	print 'Release..'
+	print('Release..')
 	releasePlots()
 	
 def saveResultToFile(newResultFile):

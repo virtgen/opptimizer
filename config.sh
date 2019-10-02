@@ -1,5 +1,8 @@
 #configuration file for optimizer
 
+PYTHON_INTERPRETER=python
+#PYTHON_INTERPRETER=python3
+
 INPUT_DIR="$ROOT/input"
 OUTPUT_DIR="$ROOT/_out"
 

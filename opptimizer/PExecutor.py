@@ -7,13 +7,15 @@ import glob
 import sys
 import time
 import os
-from opp import *
-from pcons import *
-from PTest import *
-from PResult import *
-from putils import *
-from PLog import *
-from opptimizer.opp import opplistvals, oppmodify
+
+from .opp import *
+from .pcons import *
+from .PTest import *
+from .PResult import *
+from .putils import *
+from .PLog import *
+from .PPath import *
+
 
 OPEXECUTE_VER = 8
 MEDEXECUTE_WITHOUT_DATAPREPARING = True
@@ -48,8 +50,9 @@ class PExecutor:
         result = None
         
         print('----------------------------------------')
-        print('--------------ver:' + self.version())
+        print('--------------PExecutor ver:' + self.version())
         print('----------------------------------------')
+        print('Python version:' + str(sys.version_info))
         print('Execute' + command)
         print('context:' + context)
         print('params:' + params)
@@ -220,7 +223,7 @@ class PExecutor:
             #test.setExecDir(execDir)
             finalCaseList = self.prepareChain(finalCaseList)
             for c in finalCaseList:
-                print c
+                print(c)
                 self.testlistLog.writeAsAppendLine(c, True)
                 self.dbgl(opp(P_KEY_TESTNAME, oppval(P_KEY_TESTNAME, c)) + '\n')
             

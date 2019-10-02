@@ -4,9 +4,9 @@
 # Copyright (c) 2019 Artur Bak
 
 import subprocess
-from opp import *
-from pcons import *
-from PLog import *
+from .opp import *
+from .pcons import *
+from .PLog import *
 
 class PModule:
     def __init__(self, name=""):

@@ -7,9 +7,9 @@ import sys
 from socket import *
 import time
 import os
-from opp import *
-from pcons import *
-from PLog import *
+from .opp import *
+from .pcons import *
+from .PLog import *
 import imp
 
 MEDTEST_VER = 1

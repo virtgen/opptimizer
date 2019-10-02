@@ -10,6 +10,7 @@
 import sys
 sys.path.append("../..")
 from opptimizer import *
+
 #from modules.[your_module_name] import *
 
 
@@ -17,7 +18,7 @@ def main(argv):
 
    #your code
    #...
-   print "Hello world from new script"
+   print("Hello world from new script")
    executor = PExecutor()
    
    context = opp("rootDir", "../../_out", "modules","")

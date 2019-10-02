@@ -3,8 +3,8 @@
 # opPtimizer: optimization framework for AI   
 # Copyright (c) 2019 Artur Bak
 
-from PPath import *
-from putils import *
+from .PPath import *
+from .putils import *
 
 DBG_NODEBUG_LEVEL = 0
 DBG_LOW_LEVEL = 1
