@@ -77,7 +77,6 @@ elif [ "$1" == "clean" ]; then
 	echo Cleaning temporary files..
 	rm -Rf $OUTPUT_DIR
 	rm -Rf $EXT_DIR/cpp/_obj
-	rm -Rf $MOVIES_DIR/*
         find . -name "*~" -exec rm {} \;
 	find . -name "*pyc" -exec rm {} \;
 else
