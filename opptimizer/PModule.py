@@ -41,6 +41,9 @@ class PModule:
     def getName(self):
         return self.name
     
+    def getContext(self):
+        return self.context
+    
     def setSkipExe(self, val):
         self.skipExe = val
 
@@ -127,7 +130,8 @@ class PModule:
         #if execDir != None:
         #    executionParams = oppmodify(executionParams, opp("resultFile", execDir + P_DIR_SEP + DP_RESULT_FILENAME))
         
-        self.dbgl(self.name + ".execute():" + executionParams)
+        self.dbgl(self.name + ".execute().context: " + self.context)
+        self.dbgl(self.name + ".execute().params: " + params)
         
         if self.writeTestNameToResult:
             self.resultFileOpen()
