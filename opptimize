@@ -3,11 +3,43 @@
 # opPtimizer: optimization framework for AI   
 # Copyright (c) 2019 Artur Bak
 
-
 ROOT="."
-source config.sh
 
-echo opPtimizer v1.01
+USER_CFG="./opptimizer.cfg"
+
+
+
+    
+if [ -L "$0" ]; then
+    SCRIPT=`readlink $0`
+else
+    SCRIPT=$0
+fi
+SCRIPT_DIR=`dirname $SCRIPT`
+echo "Script dir: $SCRIPT_DIR"
+
+VERSION=`cat $SCRIPT_DIR/version.txt`
+echo opPtimizer $VERSION
+
+
+
+GENERAL_CFG=$SCRIPT_DIR/general.cfg
+if [ -f $GENERAL_CFG ]; then
+    echo Loading configuration from $GENERAL_CFG
+    source $GENERAL_CFG
+else
+    echo WARNING: no configuration file found: $GENERAL_CFG
+fi
+
+if [ -f $USER_CFG ]; then
+    echo Load user configuration from $USER_CFG
+    source $USER_CFG
+else
+    echo  No user configuration file $USER_CFG found
+fi
+
+#python $SCRIPT_DIR/runscript.py
+
 if [ "$1" == "mod" -o "$1" == "script" ]; then
    echo "Mod or script"
    if [ "$1" == "mod" ]; then
@@ -74,11 +106,12 @@ elif [ "$1" == "create" ]; then
 
 
 elif [ "$1" == "clean" ]; then
-	echo Cleaning temporary files..
-	rm -Rf $OUTPUT_DIR
-	rm -Rf $EXT_DIR/cpp/_obj
+    echo Cleaning temporary files..
+    rm -Rf $OUTPUT_DIR
+    rm -Rf $EXT_DIR/cpp/_obj
         find . -name "*~" -exec rm {} \;
-	find . -name "*pyc" -exec rm {} \;
+    find . -name "*pyc" -exec rm {} \;
 else
   echo Undefined parameter: $1
 fi
+
