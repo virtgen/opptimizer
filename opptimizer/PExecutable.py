@@ -9,9 +9,16 @@ from .PLog import *
 class PExecutable(PObject):
     def __init__(self, name):
         PObject.__init__(self, name) 
+        self.context = ''
         self.logFileName = None
         self.logFile = None
 
+    def getContext(self):
+        return self.context
+
+    def setContext(self, context):
+        self.context = context
+    
     def dbg(self, txt, dbgLevel = 1):
         if self.logFile != None:
             self.logFile.dbg(txt, dbgLevel)

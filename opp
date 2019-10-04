@@ -62,7 +62,7 @@ if [ "$1" == "mod" -o "$1" == "script" ]; then
       if [ -d "$DIR/$2" ]; then
          #cd $DIR/$2
 
-         $pycmd "$DIR/$2/$2.py" $DCFG_OPP "${@:3}"
+         $pycmd "$DIR/$2/$2.py" script=$2 $DCFG_OPP "${@:3}"
          #cd $droot
       else
           echo "Error: $2 not found."

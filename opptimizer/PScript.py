@@ -7,18 +7,40 @@ from .opp import *
 from .pcons import *
 from .PLog import *
 from .PExecutable import *
+from opptimizer.opp import oppmodify
 
 class PScript(PExecutable):
     def __init__(self, name=""):
         PExecutable.__init__(self, name)
+    
+    def init(self, argv):
+        context = self.parseArgsForContext(argv) 
+        self.setContext(oppmodify(self.getContext(), context))
         
-    def getContext(self, argv):
+        scriptName = oppval('script', self.context)
+        if scriptName != None:
+            self.setName(scriptName)
+        
+        outDir = oppval('dout', self.context)
+        
+        PPath(outDir).createDirIfNone()
+        if outDir != None:
+            self.setLogFileName(outDir + P_DIR_SEP + P_SUMMARY_FILENAME)
+        else:
+            print("PModule.init() ERR: log not initialized due to lack of out dir")  
+
+    # Should be overriden
+    def execute(self, argv):    
+        return 
+    
+    def parseArgsForContext(self, argv):
         context = ''   
    
         cfgFileOppStr = None
         modDirOppStr = None
         modulesOppStr = None
         outOppStr = None
+        scriptNameOppStr = None
         
         if len(argv) > 1:
             for arg in argv:
@@ -30,21 +52,26 @@ class PScript(PExecutable):
                     modulesOppStr = arg
                 elif oppkey(arg) == 'rootDir':
                     outOppStr = arg
+                elif oppkey(arg) == 'script':
+                    scriptNameOppStr = arg
 
         if cfgFileOppStr != None:
-            context = oppsum(context, cfgFileOppStr)
+            context = oppmodify(context, cfgFileOppStr)
             cfgContext = self.parseCfgFile(cfgFileOppStr)
             if (cfgContext != ''):
-                context = oppsum(context, cfgContext)        
-        
+                context = oppsum(context, cfgContext) 
+                
+        if scriptNameOppStr != None: 
+            context = oppmodify(context, scriptNameOppStr)
+            
         if modDirOppStr != None: 
-            context = oppsum(context, modDirOppStr)
+            context = oppmodify(context, modDirOppStr)
             
         if modulesOppStr != None: 
-            context = oppsum(context, modulesOppStr)
+            context = oppmodify(context, modulesOppStr)
             
         if outOppStr != None: 
-            context = oppsum(context, outOppStr)               
+            context = oppmodify(context, outOppStr)               
             
         return context
     

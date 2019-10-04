@@ -14,36 +14,34 @@ from opptimizer import *
 # Your own script class extension 
 # You can use it in getModule() function instead of PModule
 class YourScriptClass(PScript):
-    def __init__(self, name=""):
-        PScript.__init__(self,name)
+    def __init__(self):
+        PScript.__init__(self)
         return
 
     def execute(self, argv):
-    
-        print("Execution in script")
-        print("argv:" + str(argv))
-    
-        ps = PScript()
-        ps.getContext(argv)
-       
-        context = ps.getContext(argv)            
         
-        executor = PExecutor()
-        
+        self.dbgopen()
+        PScript.execute(self, argv)  
+        self.dbgl("Execution in script")
+        self.dbgl("argv:" + str(argv))
+                
+        executor = PExecutor()     
         params = ''
-        test = executor.execute(P_KEY_TEST, context, params, opprange('sampleParam', 0, 1, 2))
-        print ("test script: final result from " + str(test.getExecDir()))
-    
+        test = executor.execute(P_KEY_TEST, self.getContext(), params, opprange('sampleParam', 0, 1, 2))
+        self.dbgl("test script: final result from " + str(test.getExecDir()))
+        self.dbgclose()
+
 # If you override script class (eg. YourScriptClass) 
 # you must override this method and create your class object
 # instead of PScript
-def getScript(scriptName):
-    script = YourScriptClass(scriptName)
+def getScript():
+    script = YourScriptClass()
     return script
 
 def main(argv):
 
-    script = getScript("Noname")
+    script = getScript()
+    script.init(argv)
     script.execute(argv)
     #your code
     #...

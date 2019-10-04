@@ -30,7 +30,7 @@ class PExecutor:
     def __init__(self):
         #self.result = dpResult()
         self.session_started = False
-        self.summaryLog = None
+        #self.summaryLog = None
         self.execLog = None
         self.testlistLog = None
         self.resultFilePath = None
@@ -56,20 +56,20 @@ class PExecutor:
         print('Execute' + command)
         print('context:' + context)
         print('params:' + params)
-        rootDir = oppval('rootDir', context)
-        if rootDir == None:
-            rootDir = '.'
+        outDir = oppval('dout', context)
+        if outDir == None:
+            outDir = '.'
 
-        execDir = createNewExecId(rootDir)
+        execDir = createNewExecId(outDir)
     
 #        if (command == KEY_LEARN or command == KEY_SEGMENT):
         testListDir = execDir
  #       else:
   #          testListDir = None
-        self.initLogFiles(rootDir, execDir, testListDir)
+        self.initLogFiles(outDir, execDir, testListDir)
         
         if not self.session_started:
-            self.summaryLog.writeAsAppendLine('TestEngineVersion=' + self.version() + ';', True)
+            #self.summaryLog.writeAsAppendLine('TestEngineVersion=' + self.version() + ';', True)
             self.session_started = True
             
         dataDir = oppval(P_KEY_DATADIR, params)
@@ -97,9 +97,9 @@ class PExecutor:
         #        rootSummary = oppsum(rootSummary, opp(KEY_SEGMENT,oppSegment))
         
                 
-        rootSummary = oppsum(rootSummary, oppRange(str(paramRange)))
+        #rootSummary = oppsum(rootSummary, oppRange(str(paramRange)))
     
-        self.summaryLog.write(rootSummary)
+        #self.summaryLog.write(rootSummary)
         
         self.dbgl(oppOut(getExecDirShortName(execDir)))
         
@@ -375,15 +375,15 @@ class PExecutor:
             #TODO uncomment
             #_TIME_dump('totalChainExecution',_TIME_totalChainExecution)  
     
-    #returns hanles to files [rootDirHandle, execDirHandle]
-    def initLogFiles(self, rootDir, execDir, testListDir):
+    #returns hanles to files [outDirHandle, execDirHandle]
+    def initLogFiles(self, outDir, execDir, testListDir):
         
-        rootSummaryFileName = rootDir + '/' + P_SUMMARY_FILENAME
+        #rootSummaryFileName = outDir + '/' + P_SUMMARY_FILENAME
         execSummaryFileName = execDir + '/' + P_EXEC_FILENAME
         testListFileName = execDir + '/' + P_TESTLIST_FILENAME
         
-        self.summaryLog = PPath(rootSummaryFileName, "summary")
-        self.summaryLog.open('a')
+        #self.summaryLog = PPath(rootSummaryFileName, "summary")
+        #self.summaryLog.open('a')
         self.execLog = PLog("ex", execSummaryFileName)
         self.execLog.openLog()
 
@@ -395,8 +395,8 @@ class PExecutor:
         
     
     def closeLogFiles(self):
-        if self.summaryLog != None:
-            self.summaryLog.close()
+        #f self.summaryLog != None:
+            #self.summaryLog.close()
             
         if self.execLog != None:
             self.execLog.close()
@@ -505,14 +505,14 @@ def getExecDirShortName(execDir):
 	return execDir.split('/')[-1]
 
 #returns pair [exec id exec_dir] 
-def createNewExecId(rootDir):
+def createNewExecId(outDir):
 	dir_id = 0
 
-	if (not os.path.isdir(rootDir)):
-		print ('medaap.Create' + rootDir)
-		os.mkdir(rootDir)
+	if (not os.path.isdir(outDir)):
+		print ('medaap.Create' + outDir)
+		os.mkdir(outDir)
 		
-	dir_list = sorted(glob.glob(rootDir + '/exec-*'), key=sortKeyForDirs)
+	dir_list = sorted(glob.glob(outDir + '/exec-*'), key=sortKeyForDirs)
 	dir_number = len(dir_list)
 	if (dir_number == 0):
 		dir_id = 1
@@ -521,7 +521,7 @@ def createNewExecId(rootDir):
 		last_prev_id = getExecDirShortName(last_prev_dir)[5:]
 		dir_id = int(last_prev_id) + 1
 	
-	new_dir = rootDir + '/' + getDirnameForId(dir_id)
+	new_dir = outDir + '/' + getDirnameForId(dir_id)
 	
 	if (not os.path.isdir(new_dir)):
 		print('Create dir:' + new_dir)
@@ -530,8 +530,8 @@ def createNewExecId(rootDir):
 	return new_dir
 
 
-def closeSummaryFiles(rootDirHandle, execDir):
-	rootDirHandle.close()
+def closeSummaryFiles(outDirHandle, execDir):
+	outDirHandle.close()
 	execDir.close()
 
 def getDescriptionForProps(params):

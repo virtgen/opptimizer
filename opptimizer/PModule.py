@@ -13,7 +13,6 @@ class PModule(PExecutable):
     def __init__(self, name=""):
         PExecutable.__init__(self, name)
         self.name = name
-        self.context = None
         self.resultFilePath = None
         self.exec_result = None
         self.resultFile = None
@@ -22,17 +21,17 @@ class PModule(PExecutable):
         return
     
     def init(self, testName, context):
-        self.context = context
+        self.setContext(context)
         if testName == None:
             testName = 'test'
             
-        testExecDir = oppval('testExecDir', self.context)
+        testExecDir = oppval('testExecDir', self.getContext())
         if testExecDir != None:
             self.setLogFileName(testExecDir + P_DIR_SEP + testName + '-log.txt')
         else:
             print("PModule.init() ERR: log not initialized due to lack of exec dir")
         
-        resultFilePath = oppval('resultFilePath', context)
+        resultFilePath = oppval('resultFilePath', self.getContext())
         self.setResultFilePath(resultFilePath)
         
         #self.dbgl("Init module " + self.name + ", logFilename:" + self.getLogFileName())
@@ -40,9 +39,6 @@ class PModule(PExecutable):
 
     def getName(self):
         return self.name
-    
-    def getContext(self):
-        return self.context
     
     def setSkipExe(self, val):
         self.skipExe = val
@@ -92,7 +88,7 @@ class PModule(PExecutable):
         testName = oppval(P_KEY_TESTNAME, params)
         self.dbgopen()
         
-        executionParams = oppmodify(self.context, params)
+        executionParams = oppmodify(self.getContext(), params)
         if self.getLogFileName() != None:
             logFileParam = self.getLogFileName()
         else:
@@ -104,7 +100,7 @@ class PModule(PExecutable):
         #if execDir != None:
         #    executionParams = oppmodify(executionParams, opp("resultFile", execDir + P_DIR_SEP + DP_RESULT_FILENAME))
         
-        self.dbgl(self.name + ".execute().context: " + self.context)
+        self.dbgl(self.name + ".execute().context: " + self.getContext())
         self.dbgl(self.name + ".execute().params: " + params)
         
         if self.writeTestNameToResult:
@@ -133,27 +129,27 @@ class PModule(PExecutable):
         
         return tokenData
         
-    def getDirFromContext(self, dirParamName):
+    #def getDirFromContext(self, dirParamName):
 
-        dirParam = oppval(dirParamName, self.context)
-        return dirParam
+    #    dirParam = oppval(dirParamName, self.getContext())
+    #    return dirParam
     
-    def getRootDir(self):
-        d = self.getDirFromContext(P_KEY_ROOTDIR)
-        if (d == None):
-            d = P_DEFAULT_ROOTDIR
-        return d
+    #def getRootDir(self):
+    #    d = self.getDirFromContext(P_KEY_ROOTDIR)
+    #    if (d == None):
+    #        d = P_DEFAULT_ROOTDIR
+    #    return d
     
-    def getInputDir(self):
-        d = self.getDirFromContext(P_KEY_INPUTDIR)
-        if (d == None):
-            d = self.getRootDir() + P_DIR_SEP + P_DEFAULT_INPUTDIR
-        return d
+    #def getInputDir(self):
+    #    d = self.getDirFromContext(P_KEY_INPUTDIR)
+    #    if (d == None):
+    #        d = self.getRootDir() + P_DIR_SEP + P_DEFAULT_INPUTDIR
+    #    return d
 
-    def getOutputDir(self):
-        d = self.getDirFromContext(P_KEY_OUTPUTDIR)
-        if (d == None):
-            d = self.getRootDir() + P_DIR_SEP + P_DEFAULT_OUTPUTDIR
-        return d    
+    #def getOutputDir(self):
+    #    d = self.getDirFromContext(P_KEY_OUTPUTDIR)
+    #    if (d == None):
+    #        d = self.getRootDir() + P_DIR_SEP + P_DEFAULT_OUTPUTDIR
+    #    return d    
     
     
