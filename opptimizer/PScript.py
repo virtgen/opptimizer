@@ -6,10 +6,11 @@
 from .opp import *
 from .pcons import *
 from .PLog import *
+from .PExecutable import *
 
-class PScript(PObject):
+class PScript(PExecutable):
     def __init__(self, name=""):
-        PObject.__init__(self, name)
+        PExecutable.__init__(self, name)
         
     def getContext(self, argv):
         context = ''   

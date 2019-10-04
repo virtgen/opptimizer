@@ -36,7 +36,7 @@ class YourModuleClass(PModulePy):
 
 # If you override module class (eg. YourModuleClass) 
 # you must override this method and create your class object
-# instead of doPyModule
+# instead of PModulePy
 def getModule(moduleName):
     module = YourModuleClass(moduleName)
     return module
