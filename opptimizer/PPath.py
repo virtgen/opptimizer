@@ -9,8 +9,8 @@ from .pcons import *
 from .PObject import *
 
 class PPath(PObject):
-        def __init__(self, path = None, oppKey = None, name = ""):
-            PObject.__init__(self, oppKey, name)
+        def __init__(self, path = None, name = ""):
+            PObject.__init__(self, name)
             self.path = path
             self.file = None
     
@@ -49,13 +49,13 @@ class PPath(PObject):
             if (os.path.isdir(self.path)):
                 shutil.rmtree(self.path)
             self.createDir()
-            
-        def open(self, append = False):
+                   
+        def open(self, mode = 'r'):
             if (self.path != None):
-                if append:
-                    mode = 'a'
-                else:
-                    mode = 'w'
+                #if append:
+                #    mode = 'a'
+                #else:
+                #    mode = 'w'
                     
                 self.file = open(self.path, mode)
             else:
@@ -91,3 +91,7 @@ class PPath(PObject):
                 self.file = None
             else:
                 oppdbg(WARN_KEY + ':PPath(' + self.name  + ").close(try to close the closed file \n")
+        
+        def readLines(self):
+            if self.isOpened():
+                return self.file.readlines()

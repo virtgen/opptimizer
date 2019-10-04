@@ -12,8 +12,8 @@ DBG_MEDIUM_LEVEL = 2
 DBG_HIGH_LEVEL = 3
 
 class PLog(PPath):
-    def __init__(self, name = "", path = None, oppKey = None):
-        PPath.__init__(self, path, oppKey, name)
+    def __init__(self, name = "", path = None):
+        PPath.__init__(self, path, name)
         self.active = False
         self.LEVEL = DBG_LOW_LEVEL
         self.flush = False
@@ -24,6 +24,17 @@ class PLog(PPath):
         if (path != None):
             self.setPath(path)
         return
+    
+    def openLog(self, append = True, onlyRead = False):
+        mode = 'a'
+        if not append:
+            if not onlyRead:
+                mode = 'w'
+            else:
+                mode='r'
+            
+        return self.open(mode)
+
     
     def setFlush(self, flush=True):
         self.flush = flush

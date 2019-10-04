@@ -3,8 +3,14 @@
 # opPtimizer: optimization framework for AI   
 # Copyright (c) 2019 Artur Bak
 
-USER_CFG="./opp.cfg"
+droot="."
+dcfg="./opp.cfg"
 
+echo params $#
+if [ $# -lt 1 ]; then
+    echo "Bad parameters - usage: opp <action> .."  
+    exit  
+fi
     
 if [ -L "$0" ]; then
     BASH_PATH=`readlink $0`
@@ -27,11 +33,15 @@ else
     echo WARNING: no configuration file found: $GENERAL_CFG
 fi
 
-if [ -f $USER_CFG ]; then
-    echo Load user configuration from $USER_CFG
-    source $USER_CFG
+
+DCFG_OPP=
+if [ -f $dcfg ]; then
+    echo Load user configuration from $dcfg
+    source $dcfg
+    # if user config file exists it will be passed to py as argument
+    DCFG_OPP="dcfg=$dcfg"
 else
-    echo  No user configuration file $USER_CFG found
+    echo  Skipped nonexisting configuration file $dcfg
 fi
 
 #$pycmd $BASH_DIR/runscript.py
@@ -51,7 +61,8 @@ if [ "$1" == "mod" -o "$1" == "script" ]; then
    if [ ! "$2" == "" ]; then
       if [ -d "$DIR/$2" ]; then
          #cd $DIR/$2
-         $pycmd "$DIR/$2/$2.py" "dmods=$dmods" "rootDir=$dout"  "${@:3}"
+
+         $pycmd "$DIR/$2/$2.py" $DCFG_OPP "${@:3}"
          #cd $droot
       else
           echo "Error: $2 not found."

@@ -382,14 +382,14 @@ class PExecutor:
         execSummaryFileName = execDir + '/' + P_EXEC_FILENAME
         testListFileName = execDir + '/' + P_TESTLIST_FILENAME
         
-        self.summaryLog = PPath(rootSummaryFileName, "summaryFile" "summary")
-        self.summaryLog.open(True)
+        self.summaryLog = PPath(rootSummaryFileName, "summary")
+        self.summaryLog.open('a')
         self.execLog = PLog("ex", execSummaryFileName)
-        self.execLog.open()
+        self.execLog.openLog()
 
         if (testListDir != None):
-            self.testlistLog = PPath(testListFileName, "testListFile", "testList")
-            self.testlistLog.open()
+            self.testlistLog = PPath(testListFileName, "testList")
+            self.testlistLog.open('a')
         
         self.resultFilePath = execDir + '/' + P_RESULT_FILENAME
         

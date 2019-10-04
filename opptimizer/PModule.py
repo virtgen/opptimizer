@@ -7,15 +7,15 @@ import subprocess
 from .opp import *
 from .pcons import *
 from .PLog import *
+from .PExecutable import *
 
-class PModule:
+class PModule(PExecutable):
     def __init__(self, name=""):
+        PExecutable.__init__(self, name)
         self.name = name
         self.context = None
         self.resultFilePath = None
         self.exec_result = None
-        self.logFileName = None
-        self.logFile = None
         self.resultFile = None
         self.skipExe = False
         self.writeTestNameToResult = True
@@ -49,30 +49,11 @@ class PModule:
 
     
     #####  FILES (log/data)  INTERFACE  ################
-    
-    def dbg(self, txt, dbgLevel = 1):
-        if self.logFile != None:
-            self.logFile.dbg(txt, dbgLevel)
-
-    def dbgl(self, txt, dbgLevel = 1):
-        if self.logFile != None:
-            self.logFile.dbgl(txt, dbgLevel)
-
-    def dbgopen(self):
-        if (self.logFileName != None):
-            self.logFile = PLog(self.name, self.getLogFileName())
-            self.logFile.open(True)
-        else:
-            print("PModule.dbgopen() ERR: log not initialized due to lack of path")
-
-    def dbgclose(self):
-        if self.logFile != None:
-            self.logFile.close()
 
     def resultFileOpen(self):
         if (self.getResultFilePath() != None):
-            self.resultFile = PPath(self.getResultFilePath(), "ResultFile", 'resultFile')
-            self.resultFile.open(True)
+            self.resultFile = PPath(self.getResultFilePath(), "ResultFile")
+            self.resultFile.open('a')
         else:
             print("PModule.resulFiletOpen() ERR: log not initialized due to lack of path")
 
@@ -85,20 +66,13 @@ class PModule:
             self.resultFile.write(resultStr)
 
 
-    def setLogFileName(self, logFileName):
-        self.logFileName = logFileName
-            
-    def getLogFileName(self):
-        return self.logFileName
-
     def setResultFilePath(self, resultFilePath):
         self.resultFilePath = resultFilePath
             
     def getResultFilePath(self):
         return self.resultFilePath
             
-    def getLog(self):
-        return self.logFile
+
     
     #####  END of FILES (log/data)  INTERFACE  ################
     
