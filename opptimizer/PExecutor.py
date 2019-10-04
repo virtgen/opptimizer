@@ -337,6 +337,13 @@ class PExecutor:
             acceptMods = opplistvals(oppval('acceptMods', testParams))
             
             if (modulesParam != None):
+                                                
+                modules_dir = oppval('dmods', context)
+                #module_exec_dir = "../../modules/" + mod + "/"
+                
+                if modules_dir == None or modules_dir == '':
+                    modules_dir = '.'  #current directory is default dir for modules
+
                 modules = opplistvals(modulesParam)
                 if (len(modules)>0):
                     for mod in modules:
@@ -344,9 +351,10 @@ class PExecutor:
                             if (not mod in condMods) or (mod in acceptMods): 
                                 self.dbgl("RUN module:" + mod)
                                 self.dbgl("cwd:" + os.getcwd())
-                                module_exec_dir = "../../modules/" + mod + "/"
+                                module_exec_dir =  modules_dir + "/" + mod + "/"
                                 self.dbgl("module_exec_dir:" + module_exec_dir)
                                 #mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
+
                                 mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
                                 print("mod_y============== will call getModule()")
                                 module = mod_py.getModule(mod)
@@ -358,7 +366,7 @@ class PExecutor:
                         else:
                             self.dbgl("executeChain: empty module name. SKIPPED")
                 else:
-                    self.dbgl("executeChain: Empty list of modules. Nothing to do.")   
+                    self.dbgl("executeChain: Empty list of modules. Nothing to do.")
             else:
                 self.dbgl("executeChain: modules to run not defined")
           

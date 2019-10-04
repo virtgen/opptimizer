@@ -3,27 +3,23 @@
 # opPtimizer: optimization framework for AI   
 # Copyright (c) 2019 Artur Bak
 
-ROOT="."
-
-USER_CFG="./opptimizer.cfg"
-
-
+USER_CFG="./opp.cfg"
 
     
 if [ -L "$0" ]; then
-    SCRIPT=`readlink $0`
+    BASH_PATH=`readlink $0`
 else
-    SCRIPT=$0
+    BASH_PATH=$0
 fi
-SCRIPT_DIR=`dirname $SCRIPT`
-echo "Script dir: $SCRIPT_DIR"
+BASH_DIR=`dirname $BASH_PATH`
+echo "Bash dir: $BASH_DIR"
 
-VERSION=`cat $SCRIPT_DIR/version.txt`
+VERSION=`cat $BASH_DIR/version.txt`
 echo opPtimizer $VERSION
 
 
 
-GENERAL_CFG=$SCRIPT_DIR/general.cfg
+GENERAL_CFG=$BASH_DIR/general.cfg
 if [ -f $GENERAL_CFG ]; then
     echo Loading configuration from $GENERAL_CFG
     source $GENERAL_CFG
@@ -38,14 +34,14 @@ else
     echo  No user configuration file $USER_CFG found
 fi
 
-#python $SCRIPT_DIR/runscript.py
+#$pycmd $BASH_DIR/runscript.py
 
 if [ "$1" == "mod" -o "$1" == "script" ]; then
    echo "Mod or script"
    if [ "$1" == "mod" ]; then
-      DIR=$MODULES_DIR
+      DIR=$dmods
    elif [ "$1" == "script" ]; then
-      DIR=$SCRIPTS_DIR
+      DIR=$dscripts
    else
       echo "Internal SH error 01 (run.sh)"
    fi
@@ -54,9 +50,9 @@ if [ "$1" == "mod" -o "$1" == "script" ]; then
 
    if [ ! "$2" == "" ]; then
       if [ -d "$DIR/$2" ]; then
-         cd $DIR/$2
-         $PYTHON_INTERPRETER $2.py $2 $3 $4 
-         cd $ROOT
+         #cd $DIR/$2
+         $pycmd "$DIR/$2/$2.py" "dmods=$dmods" "rootDir=$dout"  "${@:3}"
+         #cd $droot
       else
           echo "Error: $2 not found."
       fi
@@ -67,20 +63,20 @@ elif [ "$1" == "create" ]; then
    if [ "$2" == "mod" ]; then     
 # here you can define template dir depending on module technology (cpp,py,R etc)       
       if [ "$4" == "cpp" ]; then
-         TEMPLATE_DIR=$TEMPLATES_DIR/modcpp/
+         TEMPLATE_DIR=$dtemplates/modcpp/
       else
 # default technology is py
-         TEMPLATE_DIR=$TEMPLATES_DIR/mod/          
+         TEMPLATE_DIR=$dtemplates/mod/          
       fi
 
 #      TEMPLATE_SH=runmod.sh
       TEMPLATE_PY=mod.py
-      TARGET_DIR=$MODULES_DIR/$3
+      TARGET_DIR=$dmods/$3
    elif [ "$2" == "script" ]; then
-      TEMPLATE_DIR=$TEMPLATES_DIR/script/
+      TEMPLATE_DIR=$dtemplates/script/
  #     TEMPLATE_SH=runscript.sh
       TEMPLATE_PY=script.py
-      TARGET_DIR=$SCRIPTS_DIR/$3
+      TARGET_DIR=$dscripts/$3
    else
        echo "Error: no template $2 found for creation."
        exit
@@ -107,7 +103,7 @@ elif [ "$1" == "create" ]; then
 
 elif [ "$1" == "clean" ]; then
     echo Cleaning temporary files..
-    rm -Rf $OUTPUT_DIR
+    rm -Rf $dout
     rm -Rf $EXT_DIR/cpp/_obj
         find . -name "*~" -exec rm {} \;
     find . -name "*pyc" -exec rm {} \;
