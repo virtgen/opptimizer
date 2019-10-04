@@ -6,7 +6,7 @@
 droot="."
 dcfg="./opp.cfg"
 
-echo params $#
+
 if [ $# -lt 1 ]; then
     echo "Bad parameters - usage: opp <action> .."  
     exit  
@@ -23,7 +23,7 @@ echo "Bash dir: $BASH_DIR"
 VERSION=`cat $BASH_DIR/version.txt`
 echo opPtimizer $VERSION
 
-
+TEMPLATES_SRC_DIR="$BASH_DIR/templates"
 
 GENERAL_CFG=$BASH_DIR/general.cfg
 if [ -f $GENERAL_CFG ]; then
@@ -61,8 +61,8 @@ if [ "$1" == "mod" -o "$1" == "script" ]; then
    if [ ! "$2" == "" ]; then
       if [ -d "$DIR/$2" ]; then
          #cd $DIR/$2
-
-         $pycmd "$DIR/$2/$2.py" script=$2 $DCFG_OPP "${@:3}"
+         $pycmd $BASH_DIR/runscript.py $DIR/$2/$2.py script=$2 $DCFG_OPP "${@:3}"
+         #$pycmd "$DIR/$2/$2.py" script=$2 $DCFG_OPP "${@:3}"
          #cd $droot
       else
           echo "Error: $2 not found."
@@ -74,17 +74,17 @@ elif [ "$1" == "create" ]; then
    if [ "$2" == "mod" ]; then     
 # here you can define template dir depending on module technology (cpp,py,R etc)       
       if [ "$4" == "cpp" ]; then
-         TEMPLATE_DIR=$dtemplates/modcpp/
+         TEMPLATE_DIR=$TEMPLATES_SRC_DIR/modcpp/
       else
 # default technology is py
-         TEMPLATE_DIR=$dtemplates/mod/          
+         TEMPLATE_DIR=$TEMPLATES_SRC_DIR/mod/          
       fi
 
 #      TEMPLATE_SH=runmod.sh
       TEMPLATE_PY=mod.py
       TARGET_DIR=$dmods/$3
    elif [ "$2" == "script" ]; then
-      TEMPLATE_DIR=$dtemplates/script/
+      TEMPLATE_DIR=$TEMPLATES_SRC_DIR/script/
  #     TEMPLATE_SH=runscript.sh
       TEMPLATE_PY=script.py
       TARGET_DIR=$dscripts/$3

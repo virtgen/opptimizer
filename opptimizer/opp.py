@@ -51,9 +51,9 @@ def oppval(key, params):
 
 #returns first key from params
 def oppkey(params):
-    key= None
+    key = None
     tokens = params.split('=')
-    if len(tokens) > 0:
+    if len(tokens) > 1:
         key = tokens[0]
     return key
 

@@ -21,6 +21,7 @@ class PScript(PExecutable):
         if scriptName != None:
             self.setName(scriptName)
         
+        print('script.init, context:' + self.getContext())
         outDir = oppval('dout', self.context)
         
         PPath(outDir).createDirIfNone()
@@ -35,57 +36,29 @@ class PScript(PExecutable):
     
     def parseArgsForContext(self, argv):
         context = ''   
-   
-        cfgFileOppStr = None
-        modDirOppStr = None
-        modulesOppStr = None
-        outOppStr = None
-        scriptNameOppStr = None
         
         if len(argv) > 1:
             for arg in argv:
-                if oppkey(arg) == 'dcfg':
-                    cfgFileOppStr = arg
-                elif oppkey(arg) == 'dmods':
-                    modDirOppStr = arg
-                elif oppkey(arg) == 'modules':
-                    modulesOppStr = arg
-                elif oppkey(arg) == 'rootDir':
-                    outOppStr = arg
-                elif oppkey(arg) == 'script':
-                    scriptNameOppStr = arg
+                if oppkey(arg) != None:
+                    context = oppmodify(context, arg)
 
-        if cfgFileOppStr != None:
-            context = oppmodify(context, cfgFileOppStr)
-            cfgContext = self.parseCfgFile(cfgFileOppStr)
+        
+        cfgFile = oppval('dcfg', context)
+        if cfgFile != None:
+            cfgContext = self.parseCfgFile(cfgFile)
             if (cfgContext != ''):
                 context = oppsum(context, cfgContext) 
-                
-        if scriptNameOppStr != None: 
-            context = oppmodify(context, scriptNameOppStr)
-            
-        if modDirOppStr != None: 
-            context = oppmodify(context, modDirOppStr)
-            
-        if modulesOppStr != None: 
-            context = oppmodify(context, modulesOppStr)
-            
-        if outOppStr != None: 
-            context = oppmodify(context, outOppStr)               
             
         return context
     
-    def parseCfgFile(self, cfgFileOpp):
+    def parseCfgFile(self, cfgFile):
         context = ''
         
-        print("parseCfgFile:" + cfgFileOpp)
-        
-        cfgPath = oppval("dcfg", cfgFileOpp)
+        print("parseCfgFile:" + cfgFile)
     
-        
-        if (cfgPath != None):
+        if (cfgFile != None):
             
-            cfg = PPath(cfgPath)
+            cfg = PPath(cfgFile)
             
             if cfg.exists():
                 

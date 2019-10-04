@@ -39,8 +39,11 @@ class PPath(PObject):
         
         #Create dir if given path not exists      
         def createDirIfNone(self):
-            if (not os.path.isdir(self.path)):
-                self.createDir()
+            if self.path != None:
+                if (not os.path.isdir(self.path)):
+                    self.createDir()
+            else:
+                oppdbg(ERROR_KEY + ':PPath(' + self.name  + ").createDirIfNone(): path is None \n")
         
         # Creates directory for this path even if exists or is not empty.
         # Removes all content if existing directory is not empty.
