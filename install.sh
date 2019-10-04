@@ -27,7 +27,7 @@ INSTALL_OPP_DIR_NAME="."
 
 OPP_DEST_DIR_NAME="opptimizer"
 OPP_DEST_PATH="$OPP_DIR/$OPP_DEST_DIR_NAME"
-OPP_EXE="opptimize"
+OPP_EXE="opp"
 
 function remove {
 
@@ -54,7 +54,7 @@ function remove {
 
 echo Installing opPtimizer v1.02
 
-if [ "$1" == "remove" ]; then
+if [ "$2" == "remove" ]; then
     remove
     exit
 fi
