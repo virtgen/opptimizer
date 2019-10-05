@@ -35,7 +35,7 @@ fi
 
 
 
-if [ -f $dcfg ]; then
+if [ -f $droot/$dcfg ]; then
     echo Load user configuration from $droot/$dcfg
     source $droot/$dcfg
     # if user config file exists it will be passed to py as argument
