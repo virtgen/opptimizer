@@ -354,13 +354,15 @@ class PExecutor:
                                 module_exec_dir =  modules_dir + "/" + mod + "/"
                                 self.dbgl("module_exec_dir:" + module_exec_dir)
                                 #mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
-
-                                mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
-                                print("mod_y============== will call getModule()")
-                                module = mod_py.getModule(mod)
-                                module.init(test_name, contextForModules)
-                                test.addModule(module)
-                                tokenData =  module.execute(testParams, tokenData)
+                                modulePath = PPath(module_exec_dir + "/" + mod + ".py")
+                                if modulePath.exists():
+                                    mod_py = imp.load_source(mod, modulePath.getPath())
+                                    module = mod_py.getModule(mod)
+                                    module.init(test_name, contextForModules)
+                                    test.addModule(module)
+                                    tokenData =  module.execute(testParams, tokenData)
+                                else:
+                                    self.dbgl("Module not exists:" + modulePath.getPath())
                             else:
                                 self.dbgl('Module ' + mod + 'SKIPPED')
                         else:

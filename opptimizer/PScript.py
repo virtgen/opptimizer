@@ -22,13 +22,12 @@ class PScript(PExecutable):
             self.setName(scriptName)
         
         print('script.init, context:' + self.getContext())
+
         outDir = oppval('dout', self.context)
-        
+        if outDir == None:
+            outDir = '.'  #current directory is default for output
         PPath(outDir).createDirIfNone()
-        if outDir != None:
-            self.setLogFileName(outDir + P_DIR_SEP + P_SUMMARY_FILENAME)
-        else:
-            print("PModule.init() ERR: log not initialized due to lack of out dir")  
+        self.setLogFileName(outDir + P_DIR_SEP + P_SUMMARY_FILENAME)
 
     # Should be overriden
     def execute(self, argv):    

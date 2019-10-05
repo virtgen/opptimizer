@@ -129,27 +129,5 @@ class PModule(PExecutable):
         
         return tokenData
         
-    #def getDirFromContext(self, dirParamName):
-
-    #    dirParam = oppval(dirParamName, self.getContext())
-    #    return dirParam
-    
-    #def getRootDir(self):
-    #    d = self.getDirFromContext(P_KEY_ROOTDIR)
-    #    if (d == None):
-    #        d = P_DEFAULT_ROOTDIR
-    #    return d
-    
-    #def getInputDir(self):
-    #    d = self.getDirFromContext(P_KEY_INPUTDIR)
-    #    if (d == None):
-    #        d = self.getRootDir() + P_DIR_SEP + P_DEFAULT_INPUTDIR
-    #    return d
-
-    #def getOutputDir(self):
-    #    d = self.getDirFromContext(P_KEY_OUTPUTDIR)
-    #    if (d == None):
-    #        d = self.getRootDir() + P_DIR_SEP + P_DEFAULT_OUTPUTDIR
-    #    return d    
     
     

@@ -4,7 +4,7 @@
 # Copyright (c) 2019 Artur Bak
 
 droot="."
-dcfg="./opp.cfg"
+dcfg="opp.cfg"
 
 
 if [ $# -lt 1 ]; then
@@ -34,14 +34,16 @@ else
 fi
 
 
-DCFG_OPP=
+
 if [ -f $dcfg ]; then
-    echo Load user configuration from $dcfg
-    source $dcfg
+    echo Load user configuration from $droot/$dcfg
+    source $droot/$dcfg
     # if user config file exists it will be passed to py as argument
     DCFG_OPP="dcfg=$dcfg"
 else
-    echo  Skipped nonexisting configuration file $dcfg
+    #echo Load default configuration from $BASH_DIR/$dcfg
+    #source $BASH_DIR/$dcfg
+    DCFG_OPP=
 fi
 
 #$pycmd $BASH_DIR/runscript.py
