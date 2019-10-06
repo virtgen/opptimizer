@@ -7,8 +7,11 @@ droot="."
 dcfg="opp.cfg"
 
 
+
+
+
 if [ $# -lt 1 ]; then
-    echo "Bad parameters - usage: opp <action> .."  
+    echo "opPtimizer: bad parameters - usage: opp <action> .."  
     exit  
 fi
     
@@ -18,10 +21,15 @@ else
     BASH_PATH=$0
 fi
 BASH_DIR=`dirname $BASH_PATH`
-echo "Bash dir: $BASH_DIR"
+#echo "Bash dir: $BASH_DIR"
 
 VERSION=`cat $BASH_DIR/version.txt`
-echo opPtimizer $VERSION
+
+echo "opPtimizer $VERSION"  
+
+if [ $1 == "--version" -o $1 == "-v" -o $1 == "-V" ]; then
+    exit  
+fi
 
 TEMPLATES_SRC_DIR="$BASH_DIR/templates"
 

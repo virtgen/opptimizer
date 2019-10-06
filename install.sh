@@ -52,7 +52,9 @@ function remove {
 
 ###### MAIN ################
 
-echo Installing opPtimizer v1.02
+VERSION=`cat ./version.txt`
+
+echo Installing opPtimizer $VERSION
 
 if [ "$2" == "remove" ]; then
     remove
