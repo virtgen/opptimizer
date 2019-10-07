@@ -27,6 +27,24 @@ class PExecutable(PObject):
         if self.logFile != None:
             self.logFile.dbgl(txt, dbgLevel)
 
+    # Prints WARNING log (as string)
+    def wrn(self, txt, dbgLevel = 1):
+        if self.logFile != None:
+            self.logFile.wrn(txt, dbgLevel)
+                
+    def wrnl(self, txt, dbgLevel = 1):
+        if self.logFile != None:
+            self.logFile.wrnl(txt, dbgLevel)
+            
+    # Prints ERROR log (as string)
+    def err(self, txt, dbgLevel = 1):
+        if self.logFile != None:
+            self.logFile.err(txt, dbgLevel)
+                    
+    def errl(self, txt, dbgLevel = 1):
+        if self.logFile != None:
+            self.logFile.errl(txt, dbgLevel)
+
     def dbgopen(self):
         if (self.logFileName != None):
             self.logFile = PLog(self.name, self.getLogFileName())
