@@ -28,30 +28,39 @@ VERSION=`cat $BASH_DIR/version.txt`
 echo "opPtimizer $VERSION"  
 
 if [ $1 == "--version" -o $1 == "-v" -o $1 == "-V" ]; then
-    exit  
+    exit
 fi
 
 TEMPLATES_SRC_DIR="$BASH_DIR/templates"
 
 GENERAL_CFG=$BASH_DIR/general.cfg
 if [ -f $GENERAL_CFG ]; then
-    echo Loading configuration from $GENERAL_CFG
+    echo General configuration in $GENERAL_CFG
     source $GENERAL_CFG
 else
-    echo WARNING: no configuration file found: $GENERAL_CFG
+    echo WARNING: no general configuration file found: $GENERAL_CFG
 fi
 
 
-
 if [ -f $droot/$dcfg ]; then
-    echo Load user configuration from $droot/$dcfg
+    echo User configuration in $droot/$dcfg
     source $droot/$dcfg
     # if user config file exists it will be passed to py as argument
     DCFG_OPP="dcfg=$dcfg"
 else
-    #echo Load default configuration from $BASH_DIR/$dcfg
+    echo No user configuration.
     #source $BASH_DIR/$dcfg
     DCFG_OPP=
+fi
+
+if [ $1 == "status" ]; then
+    echo Used interpreter: $pycmd
+    echo `$pycmd -V`
+    echo Directories:
+    echo dscripts=$dscripts
+    echo dmods=$dmods
+    echo dout=$dout
+    exit  
 fi
 
 #$pycmd $BASH_DIR/runscript.py
