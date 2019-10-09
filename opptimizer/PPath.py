@@ -5,13 +5,24 @@
 import os
 import shutil
 import csv
+import glob
 from .putils import *
 from .pcons import *
 from .PObject import *
 
 class PPath(PObject):
-        def __init__(self, path = None, name = ""):
+        def __init__(self, path = None, name = "PPath", parent=None, prefix=None, postfix=None):
             PObject.__init__(self, name)
+            
+            if path != None:
+                if prefix != None:
+                    path = prefix + path 
+                if postfix != None:
+                    path = path + postfix
+                if parent != None:
+                    path = parent + P_DIR_SEP + path
+                
+            
             self.path = path
             self.file = None
             self.csvreader = None
@@ -55,6 +66,20 @@ class PPath(PObject):
             if (os.path.isdir(self.path)):
                 shutil.rmtree(self.path)
             self.createDir()
+ 
+        # Returns new PPath object with the same attributes
+        def clone(self):
+            result = None
+            if self.getPath() != None:
+                result = PPath(self.getPath(), self.name)
+            return result
+               
+        # Returns new PPath object with path to base directory
+        def cloneDir(self):
+            result = None
+            if self.getPath() != None:
+                result = PPath(os.path.dirname(self.getPath()), self.name)
+            return result
                    
         def open(self, mode = 'r', newLineParam = None):
             result = True
@@ -145,7 +170,23 @@ class PPath(PObject):
         def readLines(self):
             if self.isOpened():
                 return self.file.readlines()
-            
+        
+        # Returns list of files in directory
+        def getDirFiles(self, prefix = '', postfix = '', key=None, reverse=False): # sortKeyParam = None, reversParam = False):
+            result = None
+
+            if (self.isDir() and self.exists()): 
+                filePattern = prefix + '*' + postfix
+                dir_files = sorted(glob.glob(self.getPath() + P_DIR_SEP + filePattern), key=key, reverse=reverse) #, key=sortKeyForFiles, reverse=ctx_train_reverse)
+                result = dir_files
+            else:
+                oppdbg(WARN_KEY + ':PPath(' + self.name  + ").getDirFiles: path not exists or is not directory:" + self.getPath() + " \n")
+
+            return result
+        
+    #defines the key from filename used for loading files in proper order 
+        def sortByPaths(x):
+            return x
 
         
         
