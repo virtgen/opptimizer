@@ -72,7 +72,30 @@ class PModule(PExecutable):
     
     #####  END of FILES (log/data)  INTERFACE  ################
     
-    
+    #Returns a path to result from optimization for given input file
+    # @flat defines if test name prefix should be added
+    # @noext cuts extension form @inFilePath before processing
+    def getFileResPath(self, inFilePath, testName='', testExecDir='',
+                        noext=True, reskey=None, resext=None, flat=False):
+        result = None
+        testPrefix=''
+        
+        if flat:
+            testPrefix = testName + '-'
+        
+        if reskey != None:
+            reskey = '-' + reskey
+        else:
+            reskey = ''
+        
+        if resext != None:
+            resext = '.' + resext
+        else:
+            resext = ''
+            
+        result = PPath(inFilePath, basename=True, noext=True, prefix=testPrefix,
+                        postfix=reskey+resext, parent=testExecDir)
+        return result
     
     
     def setExecresult(self, execResult):

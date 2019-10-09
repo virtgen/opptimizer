@@ -11,10 +11,15 @@ from .pcons import *
 from .PObject import *
 
 class PPath(PObject):
-        def __init__(self, path = None, name = "PPath", parent=None, prefix=None, postfix=None):
+        def __init__(self, path = None, name = "PPath", parent=None,
+                    prefix=None, postfix=None, basename=False, noext=False):
             PObject.__init__(self, name)
             
             if path != None:
+                if basename:
+                    path= self.getBasename(path)
+                if noext:
+                    path = path.split('.')[0]
                 if prefix != None:
                     path = prefix + path 
                 if postfix != None:
@@ -50,6 +55,21 @@ class PPath(PObject):
 
         def createDir(self):
             os.mkdir(self.path)
+            
+        def getBasename(self, path=None):
+            result = None
+            pathToReturn = None
+                
+            if (path != None):
+                pathToReturn = path
+            else:
+                pathToReturn = self.getPath()
+                
+            if pathToReturn != None:
+                result = os.path.basename(pathToReturn)
+            else:
+                oppdbg(WARN_KEY + ':PPath(' + self.name  + ").getBasename: trying to get basename from empty path")
+            return result
         
         #Create dir if given path not exists      
         def createDirIfNone(self):
