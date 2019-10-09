@@ -566,7 +566,7 @@ def applyDefaultValues(params, command, execDir, dataDir):
 	
 	if oppval(P_KEY_TRAINDIR, params) == None:
 		if dataDir != None:
-			trainingPath = dataDir + '/' + P_DEFAULT_TRAININGDIR
+			trainingPath = dataDir + '/' + P_DTRAIN_DEFAULT
 			params = oppmodify(params, opp(P_KEY_TRAINDIR, trainingPath))	
 		
 #	if oppval(KEY_OUTPUTDIR, params) == None:
@@ -576,12 +576,12 @@ def applyDefaultValues(params, command, execDir, dataDir):
 
 	modelDir = oppval(P_KEY_MODELDIR, params)
 	if modelDir != None:
-		modelPath = modelDir + '/' + P_DEFAULT_OUTPUTDIR
+		modelPath = modelDir + '/' + P_DOUT_DEFAULT
 		params = oppmodify(params, opp(P_KEY_MODELDIR, modelPath))	
 			
 	if oppval(P_KEY_RAWDATADIR, params) == None:
 		if dataDir != None:
-			rawPath = dataDir + '/' + P_DEFAULT_RAWDIR
+			rawPath = dataDir + '/' + P_DRAW_DEFAULT
 			params = oppmodify(params, opp(P_KEY_RAWDATADIR, rawPath))
 	
 	if oppval(KEY_RESULTFILE, params) == None:

@@ -16,11 +16,11 @@ ERROR_KEY = 'ERR:'
 P_DIR_SEP = '/'
 P_UP_DIR = '..' + P_DIR_SEP
 
-P_DEFAULT_ROOTDIR = '.'
-P_DEFAULT_INPUTDIR = 'output'
-P_DEFAULT_OUTPUTDIR = 'output'
-P_DEFAULT_TRAININGDIR = 'training'
-P_DEFAULT_RAWDIR = 'raw'
+P_DROOT_DEFAULT = '.'
+P_DIN_DEFAULT = '_in'
+P_DOUT_DEFAULT = '_out'
+P_DTRAIN_DEFAULT = '_train'
+P_DRAW_DEFAULT = '_raw'
 
 
 P_SUMMARY_FILENAME = 'summary-log.txt'
@@ -82,7 +82,7 @@ def oppOut(val):
 #returns output dir with standard name in given path
 
 def oppStdOutputDir(path):
-    return opp(P_KEY_OUTPUTDIR,path + '/' + P_DEFAULT_OUTPUTDIR)
+    return opp(P_KEY_OUTPUTDIR,path + '/' + P_DOUT_DEFAULT)
 
 def oppCommand(val):
     return 'command=' + val

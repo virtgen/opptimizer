@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from .pcons import *
 
 # opPtimizer: optimization framework for AI   
 # Copyright (c) 2019 Artur Bak
@@ -9,7 +10,26 @@ _PRINT_LOG_ENABLED = True
 
 def medbaseversion():
     return 'b' + str(MEDBASE_VER)
-                     
+
+#Get relative path (from execution directory) to file realted to test
+# @testName  name of test
+#
+#
+def getDecorFileName(fileName, prefix= None, postfix = None):
+ 
+    decoratedFileName = ''
+
+    if prefix:
+        decoratedFileName += prefix
+    
+    decoratedFileName += fileName
+     
+    if postfix:
+        decoratedFileName += postfix
+        
+    return decoratedFileName
+
+
 def getFileLines(file):
     f = open(file,'r')
     lines = f.readlines()

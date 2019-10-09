@@ -4,6 +4,7 @@
 # Copyright (c) 2019 Artur Bak
 import os
 import shutil
+import csv
 from .putils import *
 from .pcons import *
 from .PObject import *
@@ -13,6 +14,8 @@ class PPath(PObject):
             PObject.__init__(self, name)
             self.path = path
             self.file = None
+            self.csvreader = None
+            self.csvwriter = None
     
         def setPath(self, path):
             if (self.file != None):
@@ -53,16 +56,23 @@ class PPath(PObject):
                 shutil.rmtree(self.path)
             self.createDir()
                    
-        def open(self, mode = 'r'):
+        def open(self, mode = 'r', newLineParam = None):
+            result = True
             if (self.path != None):
                 #if append:
                 #    mode = 'a'
                 #else:
                 #    mode = 'w'
+                if (newLineParam != None):
+                    self.file = open(self.path, mode, newline = newLineParam)
+                else:
+                    self.file = open(self.path, mode)
                     
-                self.file = open(self.path, mode)
             else:
+                result = False
                 oppdbg(ERROR_KEY + ':PPath(' + self.name  + ").open(): no path specified for file \n")
+            
+            return result
                 
         def isOpened(self):
             return self.file != None 
@@ -73,7 +83,8 @@ class PPath(PObject):
                 if os.path.getsize(self.path) > 0:
                     result = False
             return result 
-        
+            
+         
         def write(self, object_to_write, flush = False):
             if self.file != None:
                 self.file.write(object_to_write)
@@ -87,14 +98,54 @@ class PPath(PObject):
             if not self.isEmpty():
                 self.write('\n')
             self.write(object_to_write, flush)    
-                
+            
+
+        
+        def openCSV(self, mode = 'r', delimiterParam = ' '):
+            
+            result = None
+            if (self.open(mode, '') == True):
+                if (self.file != None):
+                    if (mode == 'r'):
+                        self.csvreader = csv.reader(self.file, delimiter=delimiterParam, quotechar='|')
+                        result = self.csvreader
+                    elif (mode == 'w' or mode == 'a'):
+                        self.csvwriter = csv.writer(self.file, delimiter=delimiterParam,
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                        result = self.csvwriter
+                    else:
+                        oppdbg(ERROR_KEY + ':PPath(' + self.getName() + ':' + self.getPath()  
+                              + ").openCSV(): mode unrecognized:" + str(mode) + " \n")
+                else:
+                    oppdbg(ERROR_KEY + ':PPath(' + self.getName() + ':' + self.getPath()  
+                              + ").openCSV(): NULL file handler:" + str(mode) + " \n")
+                    
+            return result
+        
+        def getCSVReader(self):
+            return self.csvreader
+
+        def getCSVWriter(self):
+            return self.csvwriter
+        
         def close(self):
+            result = True
+            
             if self.file != None:
                 self.file.close()
                 self.file = None
+                self.csvreader = None
+                self.csvwriter = None
             else:
+                result = False
                 oppdbg(WARN_KEY + ':PPath(' + self.name  + ").close(try to close the closed file \n")
+            
+            return result
         
         def readLines(self):
             if self.isOpened():
                 return self.file.readlines()
+            
+
+        
+        
