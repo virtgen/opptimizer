@@ -295,8 +295,7 @@ class PExecutor:
             if (test_name == None or test_name == ''):
                 testParams = oppmodify(testParams, opp(P_KEY_TESTNAME, 'noname' + str(test_counter).zfill(6)))
             
-            test = PTest(test_name, context, testParams)
-            test.setExecDir(execDir)
+
             
             self.dbgl('Execute ' +  test_name)
             
@@ -327,10 +326,15 @@ class PExecutor:
                 self.dbgl('Create exec dir for test: ' + testExecDir)
                 self.testExecDir.setPath(testExecDir)
                 self.testExecDir.createDirIfNone()
+            
+
                 
                 
-            contextForModules = oppmodify(context, opp('testExecDir', testExecDir))
-            contextForModules = oppmodify(contextForModules, opp("resultFilePath", self.resultFilePath))
+            context = oppmodify(context, opp('dtestexec', testExecDir))
+            context = oppmodify(context, opp("dresultfile", self.resultFilePath))
+            
+            test = PTest(test_name, testParams)
+            test.setTestExecDir(testExecDir)
             
             modulesParam = oppval('modules', context)
             condMods = opplistvals(oppval('condMods', context))
@@ -358,8 +362,9 @@ class PExecutor:
                                 if modulePath.exists():
                                     mod_py = imp.load_source(mod, modulePath.getPath())
                                     module = mod_py.getModule(mod)
-                                    module.init(test_name, contextForModules)
-                                    test.addModule(module)
+                                    module.setCurrentTest(test)
+                                    module.init(test_name, context)
+                                    #test.addModule(module)  TODO-abak-test
                                     tokenData =  module.execute(testParams, tokenData)
                                 else:
                                     self.dbgl("Module not exists:" + modulePath.getPath())

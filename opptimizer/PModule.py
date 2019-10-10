@@ -13,6 +13,7 @@ class PModule(PExecutable):
     def __init__(self, name=""):
         PExecutable.__init__(self, name)
         self.name = name
+        self.currentTest = None
         self.resultFilePath = None
         self.exec_result = None
         self.resultFile = None
@@ -25,13 +26,16 @@ class PModule(PExecutable):
         if testName == None:
             testName = 'test'
             
-        testExecDir = oppval('testExecDir', self.getContext())
-        if testExecDir != None:
-            self.setLogFileName(testExecDir + P_DIR_SEP + testName + '-log.txt')
+        if self.getCurrentTest() != None:
+            testExecDir = self.getCurrentTest().getTestExecDir()
+            if testExecDir != None:
+                    self.setLogFileName(testExecDir + P_DIR_SEP + testName + '-log.txt')
+            else:
+                print("PModule.init() ERR: log not initialized due to lack of exec dir")
         else:
-            print("PModule.init() ERR: log not initialized due to lack of exec dir")
+            print("PModule.init() ERR: log not initialized due to lack of current test")
         
-        resultFilePath = oppval('resultFilePath', self.getContext())
+        resultFilePath = oppval('dresultFile', self.getContext())
         self.setResultFilePath(resultFilePath)
         
         #self.dbgl("Init module " + self.name + ", logFilename:" + self.getLogFileName())
@@ -39,6 +43,12 @@ class PModule(PExecutable):
 
     def getName(self):
         return self.name
+    
+    def setCurrentTest(self, test):
+        self.currentTest = test
+    
+    def getCurrentTest(self):
+        return self.currentTest
     
     def setSkipExe(self, val):
         self.skipExe = val

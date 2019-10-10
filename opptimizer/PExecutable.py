@@ -7,9 +7,9 @@ from .PObject import *
 from .PLog import *
 
 class PExecutable(PObject):
-    def __init__(self, name):
+    def __init__(self, name, context=''):
         PObject.__init__(self, name) 
-        self.context = ''
+        self.context = context
         self.logFileName = None
         self.logFile = None
 

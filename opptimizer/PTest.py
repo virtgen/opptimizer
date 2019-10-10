@@ -11,32 +11,32 @@ from .opp import *
 from .pcons import *
 from .PLog import *
 import imp
+from .PObject import *
 
 MEDTEST_VER = 1
 
-class PTest:
-	def __init__(self, testName = None, context = None, params = None):
-		self.name = testName
-		self.context = context
+class PTest(PObject):
+	def __init__(self, testName = None, params = None):
+		PObject.__init__(self, testName)
 		self.params = params
-		self.modules = []
-		self.execDir = None
+		#self.modules = []
+		self.testExecDir = None
 		self.log = None
 		return
 
 	def version(self):
 		return 't' + str(MEDTEST_VER)
 	
-	def addModule(self, module):
-		self.modules.append(module)
+	#def addModule(self, module):
+	#	self.modules.append(module)
 		
-	def getModules(self):
-		return self.modules
+	#def getModules(self):
+	#	return self.modules
 	
-	def setExecDir(self, directory):
+	def setTestExecDir(self, directory):
 		self.execDir = directory
 	
-	def getExecDir(self):
+	def getTestExecDir(self):
 		return self.execDir
 		
 
