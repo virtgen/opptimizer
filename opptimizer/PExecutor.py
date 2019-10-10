@@ -567,34 +567,34 @@ def isPropInDesc(key, desc):
 	return result
 
 def applyDefaultValues(params, command, execDir, dataDir):
-	params = oppmodify(params, oppRoot(execDir))
+	#params = oppmodify(params, oppRoot(execDir))
 	
-	if oppval(P_KEY_TRAINDIR, params) == None:
-		if dataDir != None:
-			trainingPath = dataDir + '/' + P_DTRAIN_DEFAULT
-			params = oppmodify(params, opp(P_KEY_TRAINDIR, trainingPath))	
+	#if oppval(P_KEY_TRAINDIR, params) == None:
+	#	if dataDir != None:
+	#		trainingPath = dataDir + '/' + P_DTRAIN_DEFAULT
+	#		params = oppmodify(params, opp(P_KEY_TRAINDIR, trainingPath))	
 		
 #	if oppval(KEY_OUTPUTDIR, params) == None:
 #		if outputDir != None:
 #			outputPath = outputDir + '/' + MED_DEFAULT_OUTPUTDIR
 #			params = oppmodify(params, opp(KEY_OUTPUTDIR, outputPath))		
 
-	modelDir = oppval(P_KEY_MODELDIR, params)
-	if modelDir != None:
-		modelPath = modelDir + '/' + P_DOUT_DEFAULT
-		params = oppmodify(params, opp(P_KEY_MODELDIR, modelPath))	
+	#modelDir = oppval(P_KEY_MODELDIR, params)
+	#if modelDir != None:
+	#	modelPath = modelDir + '/' + P_DOUT_DEFAULT
+	#	params = oppmodify(params, opp(P_KEY_MODELDIR, modelPath))	
 			
-	if oppval(P_KEY_RAWDATADIR, params) == None:
-		if dataDir != None:
-			rawPath = dataDir + '/' + P_DRAW_DEFAULT
-			params = oppmodify(params, opp(P_KEY_RAWDATADIR, rawPath))
+	#if oppval(P_KEY_RAWDATADIR, params) == None:
+	#	if dataDir != None:
+	#		rawPath = dataDir + '/' + P_DRAW_DEFAULT
+	#		params = oppmodify(params, opp(P_KEY_RAWDATADIR, rawPath))
 	
-	if oppval(KEY_RESULTFILE, params) == None:
-		params = oppmodify(params, opp(KEY_RESULTFILE, P_RESULT_FILENAME))
+	#if oppval(KEY_RESULTFILE, params) == None:
+	#	params = oppmodify(params, opp(KEY_RESULTFILE, P_RESULT_FILENAME))
 	
-	if command == P_KEY_TEST:
-		if oppval(P_KEY_TEST, params) == None:
-			params = oppmodify(params, 'test=1')
+	#if command == P_KEY_TEST:
+	#	if oppval(P_KEY_TEST, params) == None:
+	#		params = oppmodify(params, 'test=1')
 
 
 	return params

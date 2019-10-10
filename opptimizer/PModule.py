@@ -35,7 +35,7 @@ class PModule(PExecutable):
         else:
             print("PModule.init() ERR: log not initialized due to lack of current test")
         
-        resultFilePath = oppval('dresultFile', self.getContext())
+        resultFilePath = oppval('dresultfile', self.getContext())
         self.setResultFilePath(resultFilePath)
         
         #self.dbgl("Init module " + self.name + ", logFilename:" + self.getLogFileName())
