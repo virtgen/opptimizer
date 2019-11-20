@@ -15,6 +15,7 @@ class PModule(PExecutable):
         self.name = name
         self.currentTest = None
         self.resultFilePath = None
+        self.inputPath = None
         self.exec_result = None
         self.resultFile = None
         self.skipExe = False
@@ -77,6 +78,12 @@ class PModule(PExecutable):
             
     def getResultFilePath(self):
         return self.resultFilePath
+    
+    def setInputPath(self, inputPath):
+        self.inputPath = inputPath
+            
+    def getInputPath(self):
+        return self.inputPath
             
 
     
@@ -114,6 +121,22 @@ class PModule(PExecutable):
     def getExecResult(self):
         return self.exec_result
     
+    #checks if input is not special key
+    # and if so it resolves for test
+    def resolveInputPath(self):
+        
+        resolvedInputPath = None        
+        context = self.getContext()
+        testExtecDir = self.getCurrentTest().getTestExecDir()
+        if context != None  and testExtecDir != None:
+            inputPath = oppval('din', context)
+            if (inputPath == '__cap'):
+                resolvedInputPath = PPath(testExtecDir + P_DIR_SEP + 'cap')
+            else:
+                resolvedInputPath = PPath(inputPath)
+                
+        self.setInputPath(resolvedInputPath)
+    
     # Executes module
     # Returns tokenData (custom global data for tests execution) 
     def execute(self, params, tokenData = None):
@@ -135,6 +158,9 @@ class PModule(PExecutable):
         
         self.dbgl(self.name + ".execute().context: " + self.getContext())
         self.dbgl(self.name + ".execute().params: " + params)
+        
+        self.resolveInputPath()
+        
         
         if self.writeTestNameToResult:
             self.resultFileOpen()
