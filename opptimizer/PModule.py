@@ -18,6 +18,7 @@ class PModule(PExecutable):
         self.inputPath = None
         self.exec_result = None
         self.resultFile = None
+        self.paramsEx = None
         self.skipExe = False
         self.writeTestNameToResult = True
         return
@@ -50,6 +51,13 @@ class PModule(PExecutable):
     
     def getCurrentTest(self):
         return self.currentTest
+    
+        # returs all params for current test    
+    def getParamsEx(self):
+        return self.paramsEx
+
+    def setParamsEx(self, paramsEx):
+        self.paramsEx = paramsEx
     
     def setSkipExe(self, val):
         self.skipExe = val
@@ -151,7 +159,7 @@ class PModule(PExecutable):
             logFileParam = "" 
             
         executionParams = oppmodify(executionParams, opp("logFile", logFileParam))
-        
+        self.setParamsEx(executionParams)
         #execDir = oppval('testExecDir', self.context)
         #if execDir != None:
         #    executionParams = oppmodify(executionParams, opp("resultFile", execDir + P_DIR_SEP + DP_RESULT_FILENAME))

@@ -18,7 +18,7 @@ class PExecutable(PObject):
 
     def setContext(self, context):
         self.context = context
-    
+        
     def dbg(self, txt, dbgLevel = 1):
         if self.logFile != None:
             self.logFile.dbg(txt, dbgLevel)
