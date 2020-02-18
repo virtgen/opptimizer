@@ -11,10 +11,15 @@ from .pcons import *
 from .PObject import *
 
 class PPath(PObject):
-        def __init__(self, path = None, name = "PPath", parent=None,
+        def __init__(self, refPath = None, name = "PPath", parent=None,
                     prefix=None, postfix=None, basename=False, noext=False):
             PObject.__init__(self, name)
             
+            if (isinstance(refPath, PPath)):
+                path = refPath.getPath()
+            else:
+                path = refPath
+
             if path != None:
                 if basename:
                     path= self.getBasename(path)
@@ -202,6 +207,32 @@ class PPath(PObject):
             else:
                 oppdbg(WARN_KEY + ':PPath(' + self.name  + ").getDirFiles: path not exists or is not directory:" + self.getPath() + " \n")
 
+            return result
+
+        #Returns a path to result from optimization for given input file
+        # @flat defines if test name prefix should be added
+        # @noext cuts extension form @inFilePath before processing
+        # Example of use: PPath(<pathStr>).getFileResPath(..)
+        def getFileResPath(self, testName='', testExecDir='',
+                            noext=True, reskey=None, resext=None, flat=False):
+            result = None
+            testPrefix=''
+            
+            if flat:
+                testPrefix = testName + '-'
+            
+            if reskey != None:
+                reskey = '-' + reskey
+            else:
+                reskey = ''
+            
+            if resext != None:
+                resext = '.' + resext
+            else:
+                resext = ''
+                
+            result = PPath(self, basename=True, noext=True, prefix=testPrefix,
+                            postfix=reskey+resext, parent=testExecDir)
             return result
         
     #defines the key from filename used for loading files in proper order 

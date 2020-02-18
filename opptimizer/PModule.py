@@ -100,8 +100,10 @@ class PModule(PExecutable):
     #Returns a path to result from optimization for given input file
     # @flat defines if test name prefix should be added
     # @noext cuts extension form @inFilePath before processing
+    # DEPRECATED: now use the same function from PPath
     def getFileResPath(self, inFilePath, testName='', testExecDir='',
                         noext=True, reskey=None, resext=None, flat=False):
+        print("DEPRECATED: PModule.getFileResPath() is deprecated. Use the same function from PPath instead!")
         result = None
         testPrefix=''
         
