@@ -59,7 +59,7 @@ class PPath(PObject):
 
 
         def createDir(self):
-            os.mkdir(self.path)
+            os.makedirs(self.path)
             
         def getBasename(self, path=None):
             result = None
