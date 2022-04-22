@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# opPtimizer: optimization framework for AI   
-# Copyright (c) 2019 Artur Bak
-
 ##########################################
 #  File template automatically generated #
 ##########################################

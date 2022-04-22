@@ -1,5 +1,3 @@
-// opPtimizer: optimization framework for AI   
-// Copyright (c) 2019 Artur Bak
 
 #include <stdio.h>
 #include <iostream>
