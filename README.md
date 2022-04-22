@@ -6,20 +6,20 @@ Optimization framework for AI.
 
 ## Linux
 
-# Install
+### Install
 git clone https://github.com/virtgen/opptimizer.git
 cd opptimizer
 sudo ./install.sh linux
 
-# Uninstall
+### Uninstall
 ./install linux remove
 
 ## MAC
 
-# Install
+### Install
 git clone https://github.com/virtgen/opptimizer.git
 cd opptimizer
 sudo ./install.sh mac
 
-# Uninstall
+### Uninstall
 ./install mac remove
