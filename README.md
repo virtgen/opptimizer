@@ -4,29 +4,34 @@ Optimization framework for AI.
 
 ## Installing
 
-### Linux
-Install
+Linux
+
 ```
 git clone https://github.com/virtgen/opptimizer.git
 cd opptimizer
 sudo ./install.sh linux
 ```
 
-Uninstall
-```
-./install linux remove
-```
 
-### MAC
+MAC
 
-Install
+
 ```
 git clone https://github.com/virtgen/opptimizer.git
 cd opptimizer
 sudo ./install.sh mac
 ```
 
-Uninstall
+## Uninstalling
+
+Linux
+
+```
+./install linux remove
+```
+
+MAC
+
 ```
 ./install mac remove
 ```
