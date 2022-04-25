@@ -48,7 +48,7 @@ class PModulePy(PModule):
                     files = inputPath.getDirFiles(pattern = data_pattern,
                         prefix = data_prefix, postfix = data_postfix, key = PPath.sortByPaths)
                     for f in files:
-                        tokenData = self.onFileProcess(f, tokenData)
+                        tokenData = self.onFileProcess(f, params, tokenData)
                 else:
                     self.errl('PModulePy::exceute: Input path not exists: ' + str(inputPath.getPath()))
             else:

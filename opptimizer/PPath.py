@@ -75,7 +75,8 @@ class PPath(PObject):
 
 
         def createDir(self):
-            os.makedirs(self.path)
+            if self.path and not self.exists():
+                os.makedirs(self.path)
             
         def getBasename(self, path=None):
             result = None

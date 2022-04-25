@@ -31,7 +31,7 @@ class YourModuleClass(PModulePy):
     
         return tokenData
     
-    def onFileProcess(self, fileToProcess, tokenData):
+    def onFileProcess(self, fileToProcess, params,tokenData):
         # add your code for single data file here
         return tokenData
 
