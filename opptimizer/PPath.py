@@ -25,7 +25,7 @@ from .PObject import *
 
 class PPath(PObject):
         def __init__(self, refPath = None, name = "PPath", parent=None,
-                    prefix=None, postfix=None, basename=False, noext=False):
+                    prefix=None, postfix=None, basename=False, noext=False, isdirtocreate=False):
             PObject.__init__(self, name)
             
             if (isinstance(refPath, PPath)):
@@ -44,12 +44,14 @@ class PPath(PObject):
                     path = path + postfix
                 if parent != None:
                     path = parent + P_DIR_SEP + path
-                
-            
+                          
             self.path = path
             self.file = None
             self.csvreader = None
             self.csvwriter = None
+
+            if isdirtocreate:
+                self.createDir()
     
         def setPath(self, path):
             if (self.file != None):
@@ -68,7 +70,8 @@ class PPath(PObject):
             return os.path.isfile(self.path)
         
         def exists(self):
-            return os.path.exists(self.path)
+            result = os.path.exists(self.path) if self.path else False
+            return result
 
 
         def createDir(self):
@@ -210,11 +213,15 @@ class PPath(PObject):
                 return self.file.readlines()
         
         # Returns list of files in directory
-        def getDirFiles(self, prefix = '', postfix = '', key=None, reverse=False): # sortKeyParam = None, reversParam = False):
+        def getDirFiles(self, pattern='*', prefix = '', postfix = '', key=None, reverse=False): # sortKeyParam = None, reversParam = False):
             result = None
 
+            pattern = pattern if pattern else '*'
+            prefix = prefix if prefix else ''
+            postfix = postfix if postfix else ''
+             
             if (self.isDir() and self.exists()): 
-                filePattern = prefix + '*' + postfix
+                filePattern = prefix + pattern + postfix
                 dir_files = sorted(glob.glob(self.getPath() + P_DIR_SEP + filePattern), key=key, reverse=reverse) #, key=sortKeyForFiles, reverse=ctx_train_reverse)
                 result = dir_files
             else:

@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# opPtimizer: optimization framework for AI   
-# Copyright (c) 2019 Artur Bak
-
 ##########################################
 #  File template automatically generated #
 ##########################################
@@ -28,7 +25,7 @@ class YourScriptClass(PScript):
         executor = PExecutor()     
         params = ''
         test = executor.execute(P_KEY_TEST, self.getContext(), params, opprange('sampleParam', 0, 1, 2))
-        self.dbgl("test script: final result from " + str(test.getExecDir()))
+        self.dbgl("test script: final result from " + str(test.getTestExecDir()))
         self.dbgclose()
 
 # If you override script class (eg. YourScriptClass) 

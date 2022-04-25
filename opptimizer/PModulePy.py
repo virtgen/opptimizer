@@ -31,5 +31,34 @@ class PModulePy(PModule):
  #   @override(PModule)
     def execute(self, params, tokenData = None):
         tokenData = PModule.execute(self, params)
+
+        context = self.getContext()
+        paramsUnion = oppmodify(context, params)
+        dataloop = oppval('dataloop', paramsUnion)
+
+        data_pattern = oppval('datapattern', paramsUnion)
+        data_prefix = oppval('dataprefix', paramsUnion)
+        data_postfix = oppval('datapostfix', paramsUnion)
+
+        if dataloop == '1':
+            inputPath = self.getInputPath()
+            
+            if inputPath and inputPath.getPath():
+                if inputPath.exists():
+                    files = inputPath.getDirFiles(pattern = data_pattern,
+                        prefix = data_prefix, postfix = data_postfix, key = PPath.sortByPaths)
+                    for f in files:
+                        tokenData = self.onFileProcess(f, tokenData)
+                else:
+                    self.errl('PModulePy::exceute: Input path not exists: ' + str(inputPath.getPath()))
+            else:
+                self.errl('PModulePy::exceute: Input path not defined')
+
+
+        return tokenData
+
+    # to override in child class
+    def onFileProcess(self, fileToProcess, tokenData):
+            
         return tokenData
     

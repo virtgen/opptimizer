@@ -18,7 +18,7 @@ class YourModuleClass(PModulePy):
  #   @override(PModule)
     def execute(self, params, tokenData = None):
 
-        tokenData = PModule.execute(self, params)
+        tokenData = PModulePy.execute(self, params)
 
         self.dbgopen()
         self.dbgl("will be writting to result:")
@@ -29,6 +29,10 @@ class YourModuleClass(PModulePy):
         
         self.dbgclose()
     
+        return tokenData
+    
+    def onFileProcess(self, fileToProcess, tokenData):
+        # add your code for single data file here
         return tokenData
 
 # If you override module class (eg. YourModuleClass) 
