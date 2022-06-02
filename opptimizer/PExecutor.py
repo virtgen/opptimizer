@@ -294,11 +294,13 @@ class PExecutor:
                 
         return newTestChain
     
+    # Returns last executed test if any
     def executeChain(self, execDir, context, testchain):
         
         test_counter = 0
         _TIME_totalChainExecution = time.time()
         
+        test = None
         tokenData = None
         for testParams in testchain:
             test_counter += 1
@@ -378,6 +380,7 @@ class PExecutor:
                                     module.init(test_name, context)
                                     #test.addModule(module)  TODO-abak-test
                                     tokenData =  module.execute(testParams, tokenData)
+                                    test.setTokenData(tokenData)
                                 else:
                                     self.dbgl("Module not exists:" + modulePath.getPath())
                             else:
@@ -388,6 +391,7 @@ class PExecutor:
                     self.dbgl("executeChain: Empty list of modules. Nothing to do.")
             else:
                 self.dbgl("executeChain: modules to run not defined")
+        
           
         return test    
   

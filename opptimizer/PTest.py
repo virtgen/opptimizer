@@ -34,6 +34,7 @@ class PTest(PObject):
 		#self.modules = []
 		self.testExecDir = None
 		self.log = None
+		self.tokenData = None
 		return
 
 	def version(self):
@@ -50,6 +51,12 @@ class PTest(PObject):
 	
 	def getTestExecDir(self):
 		return self.execDir
+
+	def setTokenData(self, tokenData):
+		self.tokenData = tokenData
+	
+	def getTokenData(self):
+		return self.tokenData
 		
 
 
