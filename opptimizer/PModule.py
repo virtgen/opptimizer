@@ -32,7 +32,7 @@ class PModule(PExecutable):
         self.resultFile = None
         self.paramsEx = None
         self.skipExe = False
-        self.writeTestNameToResult = True
+       # self.writeTestNameToResult = True
         return
     
     def init(self, testName, context):
@@ -88,9 +88,11 @@ class PModule(PExecutable):
         if self.resultFile != None:
             self.resultFile.close()
 
-    def writeToResultFile(self, resultStr):
+    def writeToResultFile(self, resultStr, semicolon = True, new_line = False):
         if self.resultFile != None:
-            self.resultFile.write(resultStr)
+            semicolon = P_PARAM_SEP if semicolon else ''
+            newline = '\n' if new_line else ''
+            self.resultFile.write(resultStr + semicolon + newline)
 
 
     def setResultFilePath(self, resultFilePath):
@@ -183,13 +185,13 @@ class PModule(PExecutable):
         
         self.resolveInputPath()
         
-        
-        if self.writeTestNameToResult:
+        writeTestNameToResult = oppval(KEY_WRITE_TESTNAME_TO_RESLT, params)
+        if writeTestNameToResult == '1':
             self.resultFileOpen()
             if (self.resultFile != None and not self.resultFile.isEmpty()):
                 self.writeToResultFile('\n')
                 
-            self.writeToResultFile(opp('testName', testName) + ';')
+            #self.writeToResultFile(opp('testName', testName) + ';')
             self.resultFileClose();
         
         

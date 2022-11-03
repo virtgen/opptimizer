@@ -28,6 +28,8 @@ ERROR_KEY = 'ERR:'
 P_DIR_SEP = '/'
 P_UP_DIR = '..' + P_DIR_SEP
 
+P_PARAM_SEP = ';'
+
 P_DROOT_DEFAULT = '.'
 P_DIN_DEFAULT = '_in'
 P_DOUT_DEFAULT = '_out'
@@ -61,6 +63,8 @@ P_KEY_FILTER = 'filter'
 
 KEY_PREPAREDATA = 'PrepareData'
 
+
+KEY_WRITE_TESTNAME_TO_RESLT = "testNameInResulfFile"
 
 KEY_PLOT = 'plot'
 KEY_PRECISION = 'precision'
@@ -105,10 +109,11 @@ def oppRange(val):
 def oppRoot(rootPath):
     return 'RootDir=' + rootPath
 
-#def oppList(key, valList):
-#    resultList = [key]
-#    resultList.extend(valList) 
-#    return resultList
+# Creates list of param values for executor
+def oppMakeOppList(key, valList):
+    resultList = [key]
+    resultList.extend(valList) 
+    return resultList
     
 def oppThreshold(key, th):
     return 'key=' + key + ';threshold=' + str(th)
