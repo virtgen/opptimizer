@@ -23,8 +23,8 @@ from .putils import *
 #import pylab as pl
 #import matplotlib
 #matplotlib.use('GTK')
-#import matplotlib.pyplot as pl   #TODO: uncomment if pl works
-FAKE_PLOT = True  #change to False once pl works
+import matplotlib.pyplot as pl   #TODO: uncomment if pl works
+FAKE_PLOT = False  #change to False once pl works
 
 
 #indexes in ctx_plots[]
@@ -172,11 +172,18 @@ def findBestValue(plot, lines):
 				
 def readResultFile(plots, fileName):
 	global tests, line_number
+
+	print('PResult:readResultFile..')
 	
 	lines = getFileLines(fileName)
-	print(lines)
-	line_number = 0
+	if lines:
+		print('- lines number: ' + str(len(lines)))
+	else:
+		print('- no lines read')
 
+	#print(lines)
+	line_number = 0
+	accepted_lines = 0
 	for line in lines:
 		line_number += 1
 		accepted = True
@@ -184,11 +191,10 @@ def readResultFile(plots, fileName):
 		bestValFound = False
 		for plot in plots:
 			val = getValForTest(line, plot)
-
+			#print('val ' + str(val) + ' th ' + str(plot[PLOT_THRESHOLD_IND]))
 			if (plot[PLOT_THRESHOLD_IND] <= 1.0): # threshold > 1 means that only best value should be accepted
 				if (val < plot[PLOT_THRESHOLD_IND]):
 					accepted = False
-					break
 			else:
 				bestOption = True
 				bestVal = findBestValue(plot, lines)
@@ -199,17 +205,27 @@ def readResultFile(plots, fileName):
 			accepted = bestValFound
 		
 		if accepted:
+
 			tests.append([line_number, line])			
 			for plot in plots:
 				val = getValForTest(line, plot)
 				plot[PLOT_VAL_IND].append(val)
-				
-def startPlots(plots):
+
+			accepted_lines += 1
+
+	print('Accepted lines: ' + str(accepted_lines))
+	
+def startPlots(plots, params = '', execDir = None):
     global main_plot, plot_x_line, plot_y_line, main_cavas, figure
+
+    print('startPlots..')
 
     if FAKE_PLOT:
         return
+
     figure = pl.figure()
+    print('startPlots:figure' + str(figure))
+    
     main_plot = figure.add_subplot(111)
 	
     figure.canvas.mpl_connect('button_press_event', onPress)
@@ -224,23 +240,33 @@ def startPlots(plots):
     
     indexes = [pair[0] for pair in tests]
     
+    print(str(indexes))
     for plot in plots:
     	if plot[PLOT_DISPLAY_IND] == '1':
     		main_plot.plot(indexes, plot[PLOT_VAL_IND], 'b-o',  color=plot[PLOT_COLOR_IND], label=plot[PLOT_LABEL_IND])
     
+    title = oppval('plotTitle', params, default='Experiment result chart')
+    plotLabelX = oppval('plotLabelX', params, default='Test cases')
+    plotLabelY = oppval('plotLabelY', params, default='Results')
+    
     main_plot.legend( loc='upper right', numpoints = 1, fancybox=True )
+
     main_plot.set_ylim([0, 1.4])
-    pl.xlabel('Test cases')
-    pl.ylabel('Evaluation normalized to [0-1]')
-    figure.suptitle('Medusa viewer for Bone-Skin detector results v1.0')
+    pl.xlabel(plotLabelX)
+    pl.ylabel(plotLabelY)
+    figure.suptitle(title)
     pl.grid()
     
-    pl.show()
+    #pl.show()
+    if execDir:
+        pl.savefig(execDir + P_DIR_SEP + 'plotResultChart.png')
 	
 def releasePlots():
 	global figure
-	figure.canvas.mpl_disconnect('button_press_event')
-	figure.canvas.mpl_disconnect('button_release_event')
+
+	if not FAKE_PLOT:
+		figure.canvas.mpl_disconnect('button_press_event')
+		figure.canvas.mpl_disconnect('button_release_event')
 
 def Slot(refSlot, paramsToUpdate):
 	return oppmodify(refSlot, paramsToUpdate) 
@@ -282,8 +308,8 @@ def	preparePlots(plots, resultFile):
 	readResultFile(plots, resultFile)
 	return plots
 
-def displayPlots(plots):
-	startPlots(plots)  #blocks on show()
+def displayPlots(plots, params = '', execDir = None):
+	startPlots(plots, params, execDir = execDir)  #blocks on show()
 	print('Release..')
 	releasePlots()
 	

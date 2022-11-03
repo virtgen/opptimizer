@@ -38,16 +38,24 @@ def oppemptyvals(*keys):
     return opp(*tuple(params))
 
 # extracts value for key if found in params (returns None if key not exists in params)
-def oppval(key, params):
+# @param params the parameter list which will be searched for the key
+# @param default value that will be returned if no key value is found in params
+def oppval(key, params, default=None):
+    result = None
     items = params.split(';')
     for item in items:
         tokens = item.split('=')
         if (tokens[0] == key):
             if len(tokens) > 1:
-                return tokens[1]
+                result = tokens[1]
             else:
-                return None
-    return None
+                result = None
+            break
+    
+    if result == None:
+        result = default
+
+    return result
 
 #returns first key from params
 def oppkey(params):

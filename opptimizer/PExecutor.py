@@ -242,7 +242,7 @@ class PExecutor:
             
             result = self.executeChain(execDir, context, finalCaseList)
             
-        elif command == P_KEY_FILTER or KEY_PLOT:
+        elif command == P_KEY_FILTER or command == KEY_PLOT:
             if (inResultFile != None):
                 inResultFile += '/' + P_RESULT_FILENAME
                 #print 'INIT-FILE',inResultFile
@@ -254,7 +254,7 @@ class PExecutor:
                     self.dbgl("<result>paramRange:" + str(paramRange))
                     
                 for p in paramRange:
-                    #print 'plot',p
+                    print('plot',p)
                     plots.append(p)
                     self.dbgl(p)
                 plots = preparePlots(plots, inResultFile)
@@ -268,14 +268,12 @@ class PExecutor:
                         self.dbgl("<result>new resultFile:" + newResultFile)
                     saveResultToFile(newResultFile)
                 elif command == KEY_PLOT:
-                    displayPlots(plots)
+                    displayPlots(plots, params, execDir = execDir)
                 
                 resetPlots()
-                return execDir
-        
-        else:
-            return None
-        
+                result = PTest(command, params)
+                result.setTestExecDir(execDir)
+
         self.closeLogFiles()
         return result
     

@@ -32,7 +32,7 @@ class PTest(PObject):
 		PObject.__init__(self, testName)
 		self.params = params
 		#self.modules = []
-		self.testExecDir = None
+		self.execDir = None
 		self.log = None
 		self.tokenData = None
 		return
