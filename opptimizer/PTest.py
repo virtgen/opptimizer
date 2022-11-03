@@ -32,7 +32,8 @@ class PTest(PObject):
 		PObject.__init__(self, testName)
 		self.params = params
 		#self.modules = []
-		self.execDir = None
+		self.testExecDir = None # this test excution dir (usually sibdir of self.execDir)
+		self.execDir = None # main execution dir (uses by executor.execute())
 		self.log = None
 		self.tokenData = None
 		return
@@ -47,9 +48,15 @@ class PTest(PObject):
 	#	return self.modules
 	
 	def setTestExecDir(self, directory):
-		self.execDir = directory
+		self.testExecDir = directory
 	
 	def getTestExecDir(self):
+		return self.testExecDir
+
+	def setExecDir(self, directory):
+		self.execDir = directory
+	
+	def getExecDir(self):
 		return self.execDir
 
 	def setTokenData(self, tokenData):

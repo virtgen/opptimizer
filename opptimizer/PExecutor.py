@@ -272,7 +272,7 @@ class PExecutor:
                 
                 resetPlots()
                 result = PTest(command, params)
-                result.setTestExecDir(execDir)
+                result.setExecDir(execDir)
 
         self.closeLogFiles()
         return result
@@ -347,6 +347,7 @@ class PExecutor:
             
             test = PTest(test_name, testParams)
             test.setTestExecDir(testExecDir)
+            test.setExecDir(execDir) # main exec dir
             
             modulesParam = oppval('modules', context)
             condMods = opplistvals(oppval('condMods', context))
