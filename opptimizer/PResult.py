@@ -36,6 +36,7 @@ PLOT_THRESHOLD_IND = 4
 PLOT_DISPLAY_IND = 5
 PLOT_COLOR_IND = 6
 PLOT_LABEL_IND = 7
+PLOT_MIN_BETTER = 8 # if lower value is better than greater
 
 
 tests = []
@@ -160,12 +161,13 @@ def getValForTest(line, plot):
 			val = 1.0 - val
 	return val
 
-def findBestValue(plot, lines):
+def findBestValue(plot, lines, inverse):
 
-	bestVal = 0.0
+	bestVal = 0.0 if not inverse else 1.0 
 	for line in lines:
 		val = getValForTest(line, plot)
-		if val > bestVal:
+		betterThanBest = val > bestVal if not inverse else val < bestVal
+		if betterThanBest:
 			bestVal = val
 			
 	return bestVal
@@ -191,16 +193,25 @@ def readResultFile(plots, fileName):
 		bestValFound = False
 		for plot in plots:
 			val = getValForTest(line, plot)
+			print('Check val ' + str(val))
 			#print('val ' + str(val) + ' th ' + str(plot[PLOT_THRESHOLD_IND]))
-			if (plot[PLOT_THRESHOLD_IND] <= 1.0): # threshold > 1 means that only best value should be accepted
-				if (val < plot[PLOT_THRESHOLD_IND]):
+			min_better = plot[PLOT_MIN_BETTER] == '1'
+			print('MIN_BETTER: ' + str(min_better) + ' in plot  ' + str(plot))
+			 # threshold > 1 means that only best value should be accepted (< 0 if 'minbetter' s used)
+			bestValueToUse = plot[PLOT_THRESHOLD_IND] > 1.0 if not min_better else plot[PLOT_THRESHOLD_IND] < 0.0
+			print('bestval ' + str(bestValueToUse))
+			if (not bestValueToUse):
+				thresholdNotMet = val < plot[PLOT_THRESHOLD_IND] if not min_better else val > plot[PLOT_THRESHOLD_IND]
+				print(' th not meet ' + str(thresholdNotMet))
+				if (thresholdNotMet):
 					accepted = False
 			else:
 				bestOption = True
-				bestVal = findBestValue(plot, lines)
-				if (val >= bestVal):
-					bestValFound = True
-
+				bestVal = findBestValue(plot, lines, min_better)
+				
+				bestValFound = val >= bestVal if not min_better else val <= bestVal
+				print(' bestVal ' + str(bestVal) + ' bestValFound ' + str(bestValFound))
+		
 		if (accepted and bestOption):
 			accepted = bestValFound
 		
@@ -276,18 +287,26 @@ def applyPlots(plots_strings):
 	plots = []
 	for plot_str in plots_strings:
 		key_val = oppval('key', plot_str)
+		print("PResult:applyPlots: " + str(plot_str))
 		if (key_val != None):
-			inverse_val = oppval('inverse', plot_str)
-			if (inverse_val == None):
-				inverse_val = '0'
+			inverse_val = oppval('inverse', plot_str, '0')
+			print("PResult:applyPlots: inverse is " + str(inverse_val))
 			norm_val = oppval('normfactor', plot_str)
 			if (norm_val == None):
 				norm_val = 1.0
 			else:
 				norm_val = float(norm_val)
+
+			min_better = oppval('minbetter', plot_str, '0')
+
 			threshold_val = oppval('threshold', plot_str)
 			if (threshold_val == None):
-				threshold_val = 0.0
+				if min_better == '0':
+					print("default thershold to 0.0")
+					threshold_val = 0.0
+				else:
+					print("default thershold to 1.0")
+					threshold_val = 1.0
 			else:
 				threshold_val = float(threshold_val)
 			label_val = oppval('label', plot_str)
@@ -299,7 +318,7 @@ def applyPlots(plots_strings):
 			color_val = oppval('color', plot_str)
 			if (color_val == None):
 				color_val = 'black'
-			plots.append([key_val, [], inverse_val, norm_val, threshold_val, display_val, color_val, label_val])
+			plots.append([key_val, [], inverse_val, norm_val, threshold_val, display_val, color_val, label_val, min_better])
 
 	return plots
 	

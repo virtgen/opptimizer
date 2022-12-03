@@ -57,6 +57,22 @@ def oppval(key, params, default=None):
 
     return result
 
+#Sets bool value for key
+def oppbool(key, val):
+    valToSet = '1' if val and (val == True or val==1 or val=='1' or val == 'T' or val == 't') else '0'
+    return opp(key, valToSet)
+
+# Returns True if val is '1' or 'True' or 'true' or 'T' or 't's
+# False othewise (or if no key found in paramssss)
+def oppvalbool(key, params):
+    
+    result = False
+    val = oppval(key, params)
+    if val =='1' or val == 'True' or val == 'true' or val == 'T' or val == 't':
+        result = True
+    
+    return result
+
 #returns first key from params
 def oppkey(params):
     key = None
@@ -106,6 +122,54 @@ def opplistvals(listval):
         vals = listval.split(',')
         for val in vals:
             result.append(val)
+    return result
+
+# Returns the list made of values for given key
+def opptolist(key, params):
+    result = None
+    
+    val = oppval(key, params)
+    if val:
+        result = opplistvals(val)
+
+    return result
+
+# Creates dictionary from pairs in the list
+# - list should contain event number of parameters like [key1,val1,key2,val2]
+# - for list with odd number of parameters or if value is '' the resultant dict item is key->None 
+def opplisttodict(params):
+    dict = None
+    list = opplistvals(params)
+    list_len = len(list) if list else 0
+    if list_len > 0:
+        dict = {}
+        key_ind = 0 
+        while key_ind < list_len:
+            dict[list[key_ind]] = list[key_ind + 1] if key_ind + 1 < list_len else None 
+            key_ind += 2
+    
+    return dict
+
+# Returns the list of two element tuples for all pairs on the list
+# - for list with odd number of parameters the last member is paired with None
+def opplisttopairs(params):
+    result = []
+    list = opplistvals(params)
+    list_len = len(list) if list else 0
+    if list_len > 0:
+        first_elem_ind = 0 
+        while first_elem_ind < list_len:
+            first_elem = list[first_elem_ind]
+            second_elem = list[first_elem_ind + 1] if first_elem_ind + 1 < list_len else None
+            result.append((first_elem, second_elem))
+            first_elem_ind += 2
+    
+    return result
+
+# Returns the two-elem tuplels made of list of pair values for given key
+def opptopairs(key, params):
+    val = oppval(key, params)
+    result = opplisttopairs(val)
     return result
 
 def oppmodify(params,newValues):

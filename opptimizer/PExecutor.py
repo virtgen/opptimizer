@@ -342,7 +342,12 @@ class PExecutor:
 
                 
                 
-            context = oppmodify(context, opp('dtestexec', testExecDir))
+            dtestexecskip = oppvalbool('dtestexecskip', context)
+            if not dtestexecskip:
+                context = oppmodify(context, opp('dtestexec', testExecDir))
+            else:
+                self.dbgl('Skipping dtestexec setup for module')
+            
             context = oppmodify(context, opp("dresultfile", self.resultFilePath))
             
             test = PTest(test_name, testParams)

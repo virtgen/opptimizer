@@ -17,6 +17,8 @@
 
 #from opp import *
 
+from .opp import *
+
 MED_VER = 5
 
 def medversion():
@@ -27,6 +29,7 @@ ERROR_KEY = 'ERR:'
 
 P_DIR_SEP = '/'
 P_UP_DIR = '..' + P_DIR_SEP
+P_NEW_LINE = '\n'
 
 P_PARAM_SEP = ';'
 
@@ -36,6 +39,12 @@ P_DOUT_DEFAULT = '_out'
 P_DTRAIN_DEFAULT = '_train'
 P_DRAW_DEFAULT = '_raw'
 
+P_SET_DEFAULT_FILENAME = 'inputset'
+P_SET_DEFAULT_FILFORMAT = 'csv'
+
+P_TRAINSET_DEFAULT_FILENAME = 'traindata'
+P_TESTSET_DEFAULT_FILENAME = 'testdata'
+P_VALIDATESET_DEFAULT_FILENAME = 'validatedata'
 
 P_SUMMARY_FILENAME = 'summary-log.txt'
 P_EXEC_FILENAME = 'exec-log.txt'
@@ -90,13 +99,24 @@ VAL_RED = 'red'
 def oppKey(val):
     return P_KEY + '=' + str(val)
 
+# Sets value for P_KEY_IN
 def oppIn(fileName):
     return P_KEY_IN + '=' + str(fileName)
 
+# Returns P_KEY_IN value
+# @param default value that will be returned if no key value is found in params
+def oppvalIn(params, default=None):
+    return oppval(P_KEY_IN, params)
+
 def oppOut(val):
     return P_KEY_OUT + '=' + val
-#returns output dir with standard name in given path
 
+# Returns P_KEY_OUT value
+# @param default value that will be returned if no key value is found in params
+def oppvalOut(params, default=None):
+    return oppval(P_KEY_OUT, params)
+
+#returns output dir with standard name in given path
 def oppStdOutputDir(path):
     return opp(P_KEY_OUTPUTDIR,path + '/' + P_DOUT_DEFAULT)
 

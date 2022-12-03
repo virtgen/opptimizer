@@ -45,16 +45,39 @@ class PPath(PObject):
                 if parent != None:
                     path = parent + P_DIR_SEP + path
                           
-            self.path = path
-            self.file = None
+            self._path = path
+            self._file = None
             self.csvreader = None
             self.csvwriter = None
 
             if isdirtocreate:
                 self.createDir()
-    
+
+        # path property
+        @property
+        def path(self):
+            return self._path
+        
+        @path.setter
+        def path(self, path):
+            # if (not path):
+            #     raise ValueError("Value not allowed")
+            self._path = path
+
+        # file property
+        def set_file(self, _file):
+            self._file = _file
+
+        def get_file(self):
+            return self._file
+
+        def del_file(self):
+            del self._file
+        
+        file = property(get_file, set_file, del_file) 
+
         def setPath(self, path):
-            if (self.file != None):
+            if (self._file != None):
                 oppdbg(WARN_KEY + ':PPath(' + self.name  + ").setPath: path cannot be changed for opened log (operation not done), existing path:" 
                         + self.path + ", requested path " + path)
             else:
@@ -63,6 +86,12 @@ class PPath(PObject):
         def getPath(self):
             return self.path
         
+        # Adds part of path to current path
+        def add(self, pathToAdd):
+            pathToAdd = P_DIR_SEP + pathToAdd if (pathToAdd and pathToAdd != '') else ''
+            self.setPath(self.getPath() + pathToAdd)
+            return self
+
         def isDir(self):
             return os.path.isdir(self.path)
         
@@ -142,7 +171,7 @@ class PPath(PObject):
             return result
                 
         def isOpened(self):
-            return self.file != None 
+            return self._file != None
         
         def isEmpty(self):
             result = True
@@ -153,10 +182,10 @@ class PPath(PObject):
             
          
         def write(self, object_to_write, flush = False):
-            if self.file != None:
-                self.file.write(object_to_write)
+            if self._file != None:
+                self._file.write(object_to_write)
                 if flush:
-                    self.file.flush()
+                    self._file.flush()
             else:
                 oppdbg(WARN_KEY + ':PPath(' + self.name  + ").write(): file not open, path:"
                        + self.path + "\n")
@@ -172,12 +201,12 @@ class PPath(PObject):
             
             result = None
             if (self.open(mode, '') == True):
-                if (self.file != None):
+                if (self._file != None):
                     if (mode == 'r'):
-                        self.csvreader = csv.reader(self.file, delimiter=delimiterParam, quotechar='|')
+                        self.csvreader = csv.reader(self._file, delimiter=delimiterParam, quotechar='|')
                         result = self.csvreader
                     elif (mode == 'w' or mode == 'a'):
-                        self.csvwriter = csv.writer(self.file, delimiter=delimiterParam,
+                        self.csvwriter = csv.writer(self._file, delimiter=delimiterParam,
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
                         result = self.csvwriter
                     else:
@@ -198,9 +227,9 @@ class PPath(PObject):
         def close(self):
             result = True
             
-            if self.file != None:
-                self.file.close()
-                self.file = None
+            if self._file != None:
+                self._file.close()
+                self._file = None
                 self.csvreader = None
                 self.csvwriter = None
             else:
@@ -211,7 +240,7 @@ class PPath(PObject):
         
         def readLines(self):
             if self.isOpened():
-                return self.file.readlines()
+                return self._file.readlines()
         
         # Returns list of files in directory
         def getDirFiles(self, pattern='*', prefix = '', postfix = '', key=None, reverse=False): # sortKeyParam = None, reversParam = False):
