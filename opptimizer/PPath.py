@@ -16,6 +16,7 @@
 # limitations under the License.
 
 import os
+from pathlib import Path
 import shutil
 import csv
 import glob
@@ -107,7 +108,7 @@ class PPath(PObject):
             if self.path and not self.exists():
                 os.makedirs(self.path)
             
-        def getBasename(self, path=None):
+        def getBasename(self, path=None, change_extension = None):
             result = None
             pathToReturn = None
                 
@@ -118,6 +119,8 @@ class PPath(PObject):
                 
             if pathToReturn != None:
                 result = os.path.basename(pathToReturn)
+                if change_extension != None:
+                    result = str(Path(result).with_suffix(change_extension))
             else:
                 oppdbg(WARN_KEY + ':PPath(' + self.name  + ").getBasename: trying to get basename from empty path")
             return result

@@ -17,15 +17,14 @@ class PSplitModule(PModulePy):
 
         self.dbgopen()
         self.dbgl("SPLIT DATA ---------------- ")
-        context = self.getContext()
 
-        self.createSetByOpps('trainset', 'trainlices', 'trainsteps', 'traincolsfile', 'traincols', 
+        self.createSetByOpps(params, 'trainset', 'trainlices', 'trainsteps', 'traincolsfile', 'traincols', 
             'trainfile', P_TRAINSET_DEFAULT_FILENAME, 'trainfileformat' )
  
-        self.createSetByOpps('testset', 'testslices', 'teststeps', 'testcolsfile', 'testcols', 
+        self.createSetByOpps(params, 'testset', 'testslices', 'teststeps', 'testcolsfile', 'testcols', 
             'testfile', P_TESTSET_DEFAULT_FILENAME, 'testfileformat' )
 
-        self.createSetByOpps('validateset', 'validateslices', 'validatesteps', 'validatecolsfile', 'validatecols', 
+        self.createSetByOpps(params, 'validateset', 'validateslices', 'validatesteps', 'validatecolsfile', 'validatecols', 
             'validatefile', P_VALIDATESET_DEFAULT_FILENAME, 'validatefileformat' )
 
         self.resultFileClose()
@@ -34,19 +33,21 @@ class PSplitModule(PModulePy):
     
         return tokenData
 
-    def createSetByOpps(self, inputFilesOpp, slicesOpp, stepsOpp, colsFileOpp, colsOpp, 
+    def createSetByOpps(self, params, inputFilesOpp, slicesOpp, stepsOpp, colsFileOpp, colsOpp, 
             fileOpp, defaultResultFileName, fileFormatOpp):
         self.dbgl(" ---- createSetByOpps for " + str(inputFilesOpp) + " ----")
-        context = self.getContext()
-        inputFiles = opptolist(inputFilesOpp, context)
+
+        paramsUnion = oppmodify(self.getContext(), params)
+
+        inputFiles = opptolist(inputFilesOpp, paramsUnion)
         if inputFiles and len(inputFiles) > 0:
-            slices = opptopairs(slicesOpp, context)
-            steps = opptolist(stepsOpp, context)
-            colsFile = oppval(colsFileOpp, context)
-            cols = opptolist(colsOpp, context)
+            slices = opptopairs(slicesOpp, paramsUnion)
+            steps = opptolist(stepsOpp, paramsUnion)
+            colsFile = oppval(colsFileOpp, paramsUnion)
+            cols = opptolist(colsOpp, paramsUnion)
             cols = self.resolveCols(colsFile, cols)
-            resultFile = oppval(fileOpp, context, defaultResultFileName)
-            resultFileFormat = oppval(fileFormatOpp, context, P_SET_DEFAULT_FILFORMAT)
+            resultFile = oppval(fileOpp, paramsUnion, defaultResultFileName)
+            resultFileFormat = oppval(fileFormatOpp, paramsUnion, P_SET_DEFAULT_FILFORMAT)
             self.createSet(inputFiles, slices, steps, cols, resultFile, resultFileFormat)
         else:
             self.dbgl("createSetByOpps: No data files defined for " + str(inputFilesOpp))
