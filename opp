@@ -23,7 +23,7 @@ fi
 BASH_DIR=`dirname $BASH_PATH`
 #echo "Bash dir: $BASH_DIR"
 
-VERSION=`cat $BASH_DIR/version.txt`
+VERSION=`cat $BASH_DIR/opptimizer/version.txt`
 
 echo "opPtimizer $VERSION"  
 

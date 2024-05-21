@@ -13,5 +13,14 @@ from .PModulePy import PModulePy
 from .PLog import PLog
 from .PPath import PPath
 
+from .__about__ import (
+    __version__,
+)
+
+
+__all__ = [
+    "__version__",
+]
+
 
 

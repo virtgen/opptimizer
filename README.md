@@ -2,7 +2,13 @@
 
 Optimization framework for AI.
 
-## Installing
+## Installing by PIP
+
+```
+pip install opptimizer 
+```
+
+## Installing locally (out of PIP packages)
 
 Linux
 

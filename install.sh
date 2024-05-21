@@ -52,7 +52,7 @@ function remove {
 
 ###### MAIN ################
 
-VERSION=`cat ./version.txt`
+VERSION=`cat opptimizer/version.txt`
 
 echo Installing opPtimizer $VERSION
 
