@@ -19,6 +19,7 @@ import glob
 import sys
 import time
 import os
+import importlib.util
 
 from .opp import *
 from .pcons import *
@@ -378,7 +379,26 @@ class PExecutor:
                                 #mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
                                 modulePath = PPath(module_exec_dir + "/" + mod + ".py")
                                 if modulePath.exists():
-                                    mod_py = imp.load_source(mod, modulePath.getPath())
+                                    # Load the module dynamically using importlib
+                                    spec = importlib.util.spec_from_file_location(mod, modulePath.getPath())
+                                    mod_py = importlib.util.module_from_spec(spec)
+
+                                    try:
+                                        spec.loader.exec_module(mod_py)
+                                    except Exception as e:
+                                        raise RuntimeError(f"Error during module execution: {e}")
+
+                                    # Print attributes to debug
+                                    # print(f"Attributes of module {mod_py.__name__}:")
+                                    # for attribute in dir(mod_py):
+                                    #     print(attribute)
+
+                                    # Check if the getModule function exists before calling it
+                                    if hasattr(mod_py, 'getModule'):
+                                        module = mod_py.getModule(mod_py)
+                                    else:
+                                        raise AttributeError(f"Module '{mod_py}' has no attribute 'getModule'")
+                                    
                                     module = mod_py.getModule(mod)
                                     module.setCurrentTest(test)
                                     module.init(test_name, context)

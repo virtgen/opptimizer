@@ -22,7 +22,6 @@ import os
 from .opp import *
 from .pcons import *
 from .PLog import *
-import imp
 from .PObject import *
 
 MEDTEST_VER = 1

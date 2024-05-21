@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.0.6] - 2024-05-21
+
+### Changed
+- fixed lack of deprecated 'imp' module for python 3.12
+
 ## [2.0.5] - 2024-05-21
 
 ### Changed
