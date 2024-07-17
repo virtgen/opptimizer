@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.0.8] - 2024-07-17
+- added executor.run() method to execute tests in a new way
+
 ## [2.0.6] - 2024-05-21
 
 ### Changed

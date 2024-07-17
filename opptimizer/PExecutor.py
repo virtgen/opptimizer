@@ -40,7 +40,12 @@ DBG_RESULT = True
 #session_started = False
 
 class PExecutor:
-    def __init__(self):
+    def __init__(self, context = None, params = None, modules = None):
+
+        self.set_context(context)
+        self.set_params(params)
+        self.set_modules(modules)
+
         #self.result = dpResult()
         self.session_started = False
         #self.summaryLog = None
@@ -52,16 +57,75 @@ class PExecutor:
         
         return
     
+    def get_context(self):
+        return self._context
+
+    def set_context(self, value):
+        self._context = value
+
+    def get_params(self):
+        return self._params
+
+    def set_params(self, value):
+        self._params = value
+
+    def get_modules(self):
+        return self._modules
+
+    def set_modules(self, value):
+        self._modules = value
+
+
+    
     def version(self):
         return 'e'+ str(OPEXECUTE_VER)
     
     def dbgl(self, textToWrite):
         if self.execLog != None and self.execLog.isOpened():
             self.execLog.dbgl(textToWrite)
+
+    # New method of execution
+    def run(self, context = None, params = None, modules = None, scope = (), **kwargs):
+        print('----------------------------------------')
+        print('--------------PExecutor.run --> ')
+        return self.execute(P_KEY_TEST, context, params, scope, modules = modules)
     
-    def execute(self, command, context, params, *paramRange):
+    # deprecated way to use from client side
+    def execute(self, command = None, context = None, params = None, *paramRange, **kwargs):
         result = None
         
+        '''    
+            Modules are extracted in following order (only one point is selected):
+                1. modules list in kwargs (key='modules')
+                2. modules param in context ('modules=..') - only modules names as strings
+                3. PExecutor.modules attribute as a list
+
+            Context and params are taken from PExecutor.context and PExecutor.params 
+                and can be overriden by arguments of this method
+        '''
+
+        if context is None:
+             context = self.get_context() if self.get_context() is not None else ''
+        
+        
+        if params is None:
+             params = self.get_params() if self.get_params() is not None else ''
+     
+        modules = None
+        if 'modules' in kwargs:
+            print('Modules got from args')
+            modules = kwargs.get('modules')
+
+        if modules is None:
+            print('Modules got from context')
+            modulesParam = oppval('modules', context)
+            if (modulesParam != None):
+                modules = opplistvals(modulesParam)
+
+        if modules is None:
+             print('Modules got from executor: {0}'.format(str(self.get_modules())))
+             modules = self.get_modules() if self.get_modules() is not None else []
+
         print('----------------------------------------')
         print('--------------PExecutor ver:' + self.version())
         print('----------------------------------------')
@@ -69,6 +133,8 @@ class PExecutor:
         print('Execute' + command)
         print('context:' + context)
         print('params:' + params)
+        print('modules:' + str(modules))
+        print('range:' + str(paramRange))
         outDir = oppval('dout', context)
         if outDir == None:
             outDir = '.'
@@ -241,7 +307,7 @@ class PExecutor:
                 self.dbgl(opp(P_KEY_TESTNAME, oppval(P_KEY_TESTNAME, c)) + '\n')
             
             
-            result = self.executeChain(execDir, context, finalCaseList)
+            result = self.executeChain(execDir, context, finalCaseList, modules = modules)
             
         elif command == P_KEY_FILTER or command == KEY_PLOT:
             if (inResultFile != None):
@@ -294,7 +360,7 @@ class PExecutor:
         return newTestChain
     
     # Returns last executed test if any
-    def executeChain(self, execDir, context, testchain):
+    def executeChain(self, execDir, context, testchain, modules = []):
         
         test_counter = 0
         _TIME_totalChainExecution = time.time()
@@ -355,66 +421,66 @@ class PExecutor:
             test.setTestExecDir(testExecDir)
             test.setExecDir(execDir) # main exec dir
             
-            modulesParam = oppval('modules', context)
+            #modulesParam = oppval('modules', context)
             condMods = opplistvals(oppval('condMods', context))
             acceptMods = opplistvals(oppval('acceptMods', testParams))
             
-            if (modulesParam != None):
+            #if (modulesParam != None):
                                                 
-                modules_dir = oppval('dmods', context)
-                #module_exec_dir = "../../modules/" + mod + "/"
-                
-                if modules_dir == None or modules_dir == '':
-                    modules_dir = '.'  #current directory is default dir for modules
+            modules_dir = oppval('dmods', context)
+            #module_exec_dir = "../../modules/" + mod + "/"
+            
+            if modules_dir == None or modules_dir == '':
+                modules_dir = '.'  #current directory is default dir for modules
 
-                modules = opplistvals(modulesParam)
-                if (len(modules)>0):
-                    for mod in modules:
-                        if (mod != ''):
-                            if (not mod in condMods) or (mod in acceptMods): 
-                                self.dbgl("RUN module:" + mod)
-                                self.dbgl("cwd:" + os.getcwd())
-                                module_exec_dir =  modules_dir + "/" + mod + "/"
-                                self.dbgl("module_exec_dir:" + module_exec_dir)
-                                #mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
-                                modulePath = PPath(module_exec_dir + "/" + mod + ".py")
-                                if modulePath.exists():
-                                    # Load the module dynamically using importlib
-                                    spec = importlib.util.spec_from_file_location(mod, modulePath.getPath())
-                                    mod_py = importlib.util.module_from_spec(spec)
+            #modules = opplistvals(modulesParam)
+            if (len(modules)>0):
+                for mod in modules:
+                    if (mod != ''):
+                        if (not mod in condMods) or (mod in acceptMods): 
+                            self.dbgl("RUN module:" + mod)
+                            self.dbgl("cwd:" + os.getcwd())
+                            module_exec_dir =  modules_dir + "/" + mod + "/"
+                            self.dbgl("module_exec_dir:" + module_exec_dir)
+                            #mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
+                            modulePath = PPath(module_exec_dir + "/" + mod + ".py")
+                            if modulePath.exists():
+                                # Load the module dynamically using importlib
+                                spec = importlib.util.spec_from_file_location(mod, modulePath.getPath())
+                                mod_py = importlib.util.module_from_spec(spec)
 
-                                    try:
-                                        spec.loader.exec_module(mod_py)
-                                    except Exception as e:
-                                        raise RuntimeError(f"Error during module execution: {e}")
+                                try:
+                                    spec.loader.exec_module(mod_py)
+                                except Exception as e:
+                                    raise RuntimeError(f"Error during module execution: {e}")
 
-                                    # Print attributes to debug
-                                    # print(f"Attributes of module {mod_py.__name__}:")
-                                    # for attribute in dir(mod_py):
-                                    #     print(attribute)
+                                # Print attributes to debug
+                                # print(f"Attributes of module {mod_py.__name__}:")
+                                # for attribute in dir(mod_py):
+                                #     print(attribute)
 
-                                    # Check if the getModule function exists before calling it
-                                    if hasattr(mod_py, 'getModule'):
-                                        module = mod_py.getModule(mod_py)
-                                    else:
-                                        raise AttributeError(f"Module '{mod_py}' has no attribute 'getModule'")
-                                    
-                                    module = mod_py.getModule(mod)
-                                    module.setCurrentTest(test)
-                                    module.init(test_name, context)
-                                    #test.addModule(module)  TODO-abak-test
-                                    tokenData =  module.execute(testParams, tokenData)
-                                    test.setTokenData(tokenData)
+                                # Check if the getModule function exists before calling it
+                                if hasattr(mod_py, 'getModule'):
+                                    module = mod_py.getModule(mod_py)
                                 else:
-                                    self.dbgl("Module not exists:" + modulePath.getPath())
+                                    raise AttributeError(f"Module '{mod_py}' has no attribute 'getModule'")
+                                
+                                module = mod_py.getModule(mod)
+                                module.setCurrentTest(test)
+                                module.init(test_name, context)
+                                #test.addModule(module)  TODO-abak-test
+                                tokenData =  module.execute(testParams, tokenData)
+                                test.setTokenData(tokenData)
                             else:
-                                self.dbgl('Module ' + mod + 'SKIPPED')
+                                self.dbgl("Module not exists:" + modulePath.getPath())
                         else:
-                            self.dbgl("executeChain: empty module name. SKIPPED")
-                else:
-                    self.dbgl("executeChain: Empty list of modules. Nothing to do.")
+                            self.dbgl('Module ' + mod + 'SKIPPED')
+                    else:
+                        self.dbgl("executeChain: empty module name. SKIPPED")
             else:
-                self.dbgl("executeChain: modules to run not defined")
+                self.dbgl("executeChain: Empty list of modules. Nothing to do.")
+            # else:
+            #     self.dbgl("executeChain: modules to run not defined")
         
           
         return test    
