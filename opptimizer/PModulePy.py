@@ -22,8 +22,8 @@ from .opp import *
 from .pcons import *
 
 class PModulePy(PModule):
-    def __init__(self, name=""):
-        PModule.__init__(self,name)
+    def __init__(self, name="", func_exec=None, func_init=None):
+        PModule.__init__(self,name, func_exec, func_init)
         self.setSkipExe(True)
         
         return

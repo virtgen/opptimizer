@@ -20,6 +20,7 @@ import sys
 import time
 import os
 import importlib.util
+import types
 
 from .opp import *
 from .pcons import *
@@ -28,6 +29,8 @@ from .PResult import *
 from .putils import *
 from .PLog import *
 from .PPath import *
+from .PModule import *
+from .Mod import *
 
 
 OPEXECUTE_VER = 8
@@ -113,14 +116,14 @@ class PExecutor:
      
         modules = None
         if 'modules' in kwargs:
-            print('Modules got from args')
             modules = kwargs.get('modules')
+            print('Modules got from args: {0}'.format(modules))
 
         if modules is None:
-            print('Modules got from context')
             modulesParam = oppval('modules', context)
             if (modulesParam != None):
                 modules = opplistvals(modulesParam)
+            print('Modules got from context: {0}'.format(modules))
 
         if modules is None:
              print('Modules got from executor: {0}'.format(str(self.get_modules())))
@@ -436,43 +439,82 @@ class PExecutor:
             #modules = opplistvals(modulesParam)
             if (len(modules)>0):
                 for mod in modules:
-                    if (mod != ''):
-                        if (not mod in condMods) or (mod in acceptMods): 
-                            self.dbgl("RUN module:" + mod)
+
+                    modName = ''
+                    module = None
+                    moduleToLoadFromSource = False # whether module should be loaded from file
+                    if isinstance(mod, str):
+                        print("Execute module by string: {0} ".format(mod))
+                        modName = mod
+                        moduleToLoadFromSource = True
+                    elif isinstance(mod, PModule):
+                        print("Execute module by module object: {0} ".format(mod))
+                        modName = mod.getName()
+                        module = mod
+                    elif isinstance(mod, types.FunctionType):
+                        print("Execute module by function: {0} ".format(mod))
+                        module = Mod(mod)
+                        modName = module.getName()
+
+                    if (modName != ''):
+                        if (not modName in condMods) or (modName in acceptMods): 
+                            self.dbgl("RUN module:" + modName)
                             self.dbgl("cwd:" + os.getcwd())
-                            module_exec_dir =  modules_dir + "/" + mod + "/"
-                            self.dbgl("module_exec_dir:" + module_exec_dir)
-                            #mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
-                            modulePath = PPath(module_exec_dir + "/" + mod + ".py")
-                            if modulePath.exists():
-                                # Load the module dynamically using importlib
-                                spec = importlib.util.spec_from_file_location(mod, modulePath.getPath())
-                                mod_py = importlib.util.module_from_spec(spec)
 
-                                try:
-                                    spec.loader.exec_module(mod_py)
-                                except Exception as e:
-                                    raise RuntimeError(f"Error during module execution: {e}")
+                            if moduleToLoadFromSource:
+                                module_exec_dir =  modules_dir + "/" + mod + "/"
+                                self.dbgl("module_exec_dir:" + module_exec_dir)
+                                #mod_py = imp.load_source(mod, module_exec_dir + "/" + mod + ".py")
+                                modulePath = PPath(module_exec_dir + "/" + mod + ".py")
 
-                                # Print attributes to debug
-                                # print(f"Attributes of module {mod_py.__name__}:")
-                                # for attribute in dir(mod_py):
-                                #     print(attribute)
+                                if modulePath.exists():
+                                    # Load the module dynamically using importlib
+                                    spec = importlib.util.spec_from_file_location(mod, modulePath.getPath())
+                                    mod_py = importlib.util.module_from_spec(spec)
 
-                                # Check if the getModule function exists before calling it
-                                if hasattr(mod_py, 'getModule'):
-                                    module = mod_py.getModule(mod_py)
+                                    try:
+                                        spec.loader.exec_module(mod_py)
+                                    except Exception as e:
+                                        raise RuntimeError(f"Error during module execution: {e}")
+
+                                    # Print attributes to debug
+                                    # print(f"Attributes of module {mod_py.__name__}:")
+                                    # for attribute in dir(mod_py):
+                                    #     print(attribute)
+
+                                    # Check if the getModule function exists before calling it
+                                    if hasattr(mod_py, 'getModule'):
+                                        module = mod_py.getModule(mod_py)
+                                    else:
+                                        raise AttributeError(f"Module '{mod_py}' has no attribute 'getModule'")
+                                    
+                                    module = mod_py.getModule(mod)
                                 else:
-                                    raise AttributeError(f"Module '{mod_py}' has no attribute 'getModule'")
+                                    self.dbgl("Module not exists:" + modulePath.getPath())
+                                    raise AttributeError(f"Module '{mod}' does not exist")
                                 
-                                module = mod_py.getModule(mod)
-                                module.setCurrentTest(test)
-                                module.init(test_name, context)
-                                #test.addModule(module)  TODO-abak-test
-                                tokenData =  module.execute(testParams, tokenData)
-                                test.setTokenData(tokenData)
+                            module.setCurrentTest(test)
+
+                            init_func = module.get_func_init()
+                            if init_func is not None:
+                                print("Call module init by handler")
+                                init_func(module, test_name, context)
                             else:
-                                self.dbgl("Module not exists:" + modulePath.getPath())
+                                print("Call module init by module method")
+                                module.init(test_name, context)
+
+                            #test.addModule(module)  TODO-abak-test
+                            exec_func = module.get_func_exec()
+                            if exec_func is not None:
+                                print("Call module exec by handler")
+                                tokenData = exec_func(module, testParams, tokenData)
+                            else:
+                                print("Call module exec by module method")
+                                tokenData = module.execute(testParams, tokenData)
+
+                            tokenData =  module.execute(testParams, tokenData)
+                            test.setTokenData(tokenData)
+
                         else:
                             self.dbgl('Module ' + mod + 'SKIPPED')
                     else:

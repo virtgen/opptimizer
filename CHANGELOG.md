@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.1.0] - 2024-07-18
+- Execution can be calle diorectly from python code (using handlers and modules object on the fly)
+
 ## [2.0.8] - 2024-07-17
 - added executor.run() method to execute tests in a new way
 

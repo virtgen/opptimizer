@@ -13,6 +13,9 @@ from .PModulePy import PModulePy
 from .PLog import PLog
 from .PPath import PPath
 
+from .Mod import Mod
+from .Executor import Executor
+
 from .__about__ import (
     __version__,
 )
