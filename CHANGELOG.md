@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.1.1] - 2024-07-28
+- Improvements in PPath, additional custom execution handlers in Modules
+ 
 ## [2.1.0] - 2024-07-18
 - Execution can be calle diorectly from python code (using handlers and modules object on the fly)
 

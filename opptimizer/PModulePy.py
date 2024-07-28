@@ -22,8 +22,8 @@ from .opp import *
 from .pcons import *
 
 class PModulePy(PModule):
-    def __init__(self, name="", func_exec=None, func_init=None):
-        PModule.__init__(self,name, func_exec, func_init)
+    def __init__(self, name="", func_exec=None, func_init=None, func_onprocess=None):
+        PModule.__init__(self,name, func_exec, func_init, func_onprocess)
         self.setSkipExe(True)
         
         return
@@ -48,7 +48,13 @@ class PModulePy(PModule):
                     files = inputPath.getDirFiles(pattern = data_pattern,
                         prefix = data_prefix, postfix = data_postfix, key = PPath.sortByPaths)
                     for f in files:
-                        tokenData = self.onFileProcess(f, params, tokenData)
+                        onprocess_func = self.get_func_onprocess()
+                        if onprocess_func is not None:
+                            print("Call module onprocess_func by handler")
+                            tokenData = onprocess_func(self, f, params, tokenData)
+                        else:
+                            print("Call module onprocess_func by module method")
+                            tokenData = self.onFileProcess(f, params, tokenData)
                 else:
                     self.errl('PModulePy::exceute: Input path not exists: ' + str(inputPath.getPath()))
             else:
@@ -58,7 +64,7 @@ class PModulePy(PModule):
         return tokenData
 
     # to override in child class
-    def onFileProcess(self, fileToProcess, tokenData):
+    def onFileProcess(self, fileToProcess,  params, tokenData):
             
         return tokenData
     

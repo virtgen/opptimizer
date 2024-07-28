@@ -38,7 +38,8 @@ class PPath(PObject):
                 if basename:
                     path= self.getBasename(path)
                 if noext:
-                    path = path.split('.')[0]
+                    #path = path.split('.')[0] ## it is incorreect if there dots in basename
+                    path = os.path.splitext(path)[0]
                 if prefix != None:
                     path = prefix + path 
                 if postfix != None:
@@ -241,9 +242,12 @@ class PPath(PObject):
             
             return result
         
-        def readLines(self):
+        def readLines(self, join_lines = False):
             if self.isOpened():
-                return self._file.readlines()
+                lines = self._file.readlines()
+                if join_lines:
+                    lines = ''.join(lines)        
+                return lines
         
         # Returns list of files in directory
         def getDirFiles(self, pattern='*', prefix = '', postfix = '', key=None, reverse=False): # sortKeyParam = None, reversParam = False):

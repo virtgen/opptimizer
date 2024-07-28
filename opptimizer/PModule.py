@@ -22,7 +22,7 @@ from .PLog import *
 from .PExecutable import *
 
 class PModule(PExecutable):
-    def __init__(self, name="", func_exec=None, func_init=None):
+    def __init__(self, name="", func_exec=None, func_init=None, func_onprocess=None):
         PExecutable.__init__(self, name)
         self.name = name
         self.currentTest = None
@@ -34,12 +34,16 @@ class PModule(PExecutable):
         self.skipExe = False
         self._func_exec = None
         self._func_init = None
+        self._func_onprocess = None
 
         if func_exec is not None:
             self.set_func_exec(func_exec)
 
         if func_init is not None:
             self.set_func_init(func_init)
+
+        if func_onprocess is not None:
+            self.set_func_onprocess(func_onprocess)
         
        # self.writeTestNameToResult = True
         return
@@ -55,6 +59,12 @@ class PModule(PExecutable):
 
     def set_func_init(self, value):
         self._func_init = value
+
+    def get_func_onprocess(self):
+        return self._func_onprocess
+
+    def set_func_onprocess(self, value):
+        self._func_onprocess = value
 
     def init(self, testName, context):
         self.setContext(context)
