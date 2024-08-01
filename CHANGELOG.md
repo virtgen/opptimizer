@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.2.0] - 2024-08-01
+- Module can be only used by from 'pip' installed version, fixed tokenData pass
+
 ## [2.1.1] - 2024-07-28
 - Improvements in PPath, additional custom execution handlers in Modules
  

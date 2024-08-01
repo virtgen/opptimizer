@@ -62,10 +62,13 @@ if [ "$2" == "remove" ]; then
 fi
 
 remove
+
 echo "Creating $OPP_DEST_PATH"
 mkdir -p $OPP_DEST_PATH
-echo Copying opPtimizer to $OPP_DEST_PATH
-cp -r $ROOT/$INSTALL_OPP_DIR_NAME/* $OPP_DEST_PATH
+echo opp exe c
+echo Only opp exex copied. Python module is not copied. Use \"pip install opptimizer\" instead
+#echo Copying opPtimizer to $OPP_DEST_PATH
+cp -r $ROOT/$INSTALL_OPP_DIR_NAME/opp $ROOT/$INSTALL_OPP_DIR_NAME/runscript.py $ROOT/$INSTALL_OPP_DIR_NAME/general.cfg  $OPP_DEST_PATH
 
 
 echo Creating symbolic links in $BIN_DIR

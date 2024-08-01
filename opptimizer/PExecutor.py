@@ -31,9 +31,10 @@ from .PLog import *
 from .PPath import *
 from .PModule import *
 from .Mod import *
+from .__about__ import *
 
 
-OPEXECUTE_VER = 8
+OPEXECUTE_VER = 10
 MEDEXECUTE_WITHOUT_DATAPREPARING = True
 
 DBG_BUILD_CASE_TREE = False
@@ -130,7 +131,7 @@ class PExecutor:
              modules = self.get_modules() if self.get_modules() is not None else []
 
         print('----------------------------------------')
-        print('--------------PExecutor ver:' + self.version())
+        print('--------------PExecutor ver:' + self.version() + ' opp ver: ' + __version__)
         print('----------------------------------------')
         print('Python version:' + str(sys.version_info))
         print('Execute' + command)
@@ -506,13 +507,12 @@ class PExecutor:
                             #test.addModule(module)  TODO-abak-test
                             exec_func = module.get_func_exec()
                             if exec_func is not None:
-                                print("Call module exec by handler")
+                                print("PExecutor::Call module exec by handler. Type of token {0}".format(type(tokenData)))
                                 tokenData = exec_func(module, testParams, tokenData)
                             else:
-                                print("Call module exec by module method")
+                                print("PExecutor::Call module exec by module method. Type of token {0}".format(type(tokenData)))
                                 tokenData = module.execute(testParams, tokenData)
 
-                            tokenData =  module.execute(testParams, tokenData)
                             test.setTokenData(tokenData)
 
                         else:

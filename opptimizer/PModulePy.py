@@ -30,7 +30,7 @@ class PModulePy(PModule):
         
  #   @override(PModule)
     def execute(self, params, tokenData = None):
-        tokenData = PModule.execute(self, params)
+        tokenData = PModule.execute(self, params, tokenData)
 
         context = self.getContext()
         paramsUnion = oppmodify(context, params)
@@ -50,10 +50,10 @@ class PModulePy(PModule):
                     for f in files:
                         onprocess_func = self.get_func_onprocess()
                         if onprocess_func is not None:
-                            print("Call module onprocess_func by handler")
+                            print("Call module onprocess_func by handler. Type of token {0}".format(type(tokenData)))
                             tokenData = onprocess_func(self, f, params, tokenData)
                         else:
-                            print("Call module onprocess_func by module method")
+                            print("Call module onprocess_func by module method. Type of token {0}".format(type(tokenData)))
                             tokenData = self.onFileProcess(f, params, tokenData)
                 else:
                     self.errl('PModulePy::exceute: Input path not exists: ' + str(inputPath.getPath()))
