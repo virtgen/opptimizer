@@ -67,6 +67,7 @@ P_KEY_OUTPUTDIR = 'outputDir'
 P_KEY_MODELDIR = 'modelDir'
 P_KEY_IN = 'in'
 P_KEY_OUT = 'out'
+P_KEY_REF_TEST = 'refTest'
 
 P_KEY_FILTER = 'filter'
 

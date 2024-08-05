@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.2.1] - 2024-08-05
+- Improved flow in test chains in subsequenyt executions
+
 ## [2.2.0] - 2024-08-01
 - Module can be only used by from 'pip' installed version, fixed tokenData pass
 

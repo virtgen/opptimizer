@@ -68,8 +68,9 @@ mkdir -p $OPP_DEST_PATH
 echo opp exe c
 echo Only opp exex copied. Python module is not copied. Use \"pip install opptimizer\" instead
 #echo Copying opPtimizer to $OPP_DEST_PATH
-cp -r $ROOT/$INSTALL_OPP_DIR_NAME/opp $ROOT/$INSTALL_OPP_DIR_NAME/runscript.py $ROOT/$INSTALL_OPP_DIR_NAME/general.cfg  $OPP_DEST_PATH
-
+cp -r $ROOT/$INSTALL_OPP_DIR_NAME/opp $ROOT/$INSTALL_OPP_DIR_NAME/runscript.py $ROOT/$INSTALL_OPP_DIR_NAME/templates $ROOT/$INSTALL_OPP_DIR_NAME/general.cfg  $OPP_DEST_PATH
+mkdir -p $OPP_DEST_PATH/opptimizer
+cp -r $ROOT/$INSTALL_OPP_DIR_NAME/opptimizer/version.txt $OPP_DEST_PATH/opptimizer
 
 echo Creating symbolic links in $BIN_DIR
 ln -s $OPP_DEST_PATH/$OPP_EXE $BIN_DIR/$OPP_EXE

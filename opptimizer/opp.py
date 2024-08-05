@@ -172,6 +172,9 @@ def opptopairs(key, params):
     result = opplisttopairs(val)
     return result
 
+# Modifies key-values pairs in params with newValues
+# - if there is no key in params then it adds new pair from newValues
+# - if given key has empty value in newValues ('') it removes such pair from result
 def oppmodify(params,newValues):
     newParams = ''
     paramItems = params.split(';')

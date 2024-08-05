@@ -34,7 +34,7 @@ from .Mod import *
 from .__about__ import *
 
 
-OPEXECUTE_VER = 10
+OPEXECUTE_VER = 13
 MEDEXECUTE_WITHOUT_DATAPREPARING = True
 
 DBG_BUILD_CASE_TREE = False
@@ -207,7 +207,9 @@ class PExecutor:
                 param_lines = []
                 #if (learningToDo):
                 for l in lines:
+                    refTestName = oppval(P_KEY_TESTNAME, l)
                     param_l = oppmodify(l, oppemptyvals(P_KEY_TESTNAME, KEY_ACCURACY, KEY_PRECISION,KEY_RECALL, KEY_FALLOUT))
+                    param_l = oppmodify(param_l, opp(P_KEY_REF_TEST, refTestName))
                     param_lines.append(param_l)
                     if DBG_REF_TEST:
                         self.dbgl("<ref-test>applied:"+ l)
@@ -424,6 +426,17 @@ class PExecutor:
             test = PTest(test_name, testParams)
             test.setTestExecDir(testExecDir)
             test.setExecDir(execDir) # main exec dir
+
+            resultUse = oppvalbool('resultFileUse', context)
+            if resultUse:
+                self.dbgl('Result file managed by Executor.. resultFileUse:{0}'.format(resultUse))
+                # Write test name to result file 
+                resFile = PPath(self.resultFilePath)
+                resFile.open('a')
+                resFile.write(opp(P_KEY_TESTNAME, test_name) + P_PARAM_SEP)
+                resFile.close()
+            else:
+                 self.dbgl('Result file not handled by Executor.. resultFileUse:{0}'.format(resultUse))
             
             #modulesParam = oppval('modules', context)
             condMods = opplistvals(oppval('condMods', context))
@@ -524,6 +537,12 @@ class PExecutor:
             # else:
             #     self.dbgl("executeChain: modules to run not defined")
         
+            if resultUse:
+                # Write new line to result file 
+                resFile = PPath(self.resultFilePath)
+                resFile.open('a')
+                resFile.write(P_NEW_LINE)
+                resFile.close()
           
         return test    
   
