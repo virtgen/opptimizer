@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.2.2] - 2024-08-05
+- Improved logs from executions
+
 ## [2.2.1] - 2024-08-05
 - Improved flow in test chains in subsequenyt executions
 

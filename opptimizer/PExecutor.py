@@ -34,7 +34,7 @@ from .Mod import *
 from .__about__ import *
 
 
-OPEXECUTE_VER = 13
+OPEXECUTE_VER = 14
 MEDEXECUTE_WITHOUT_DATAPREPARING = True
 
 DBG_BUILD_CASE_TREE = False
@@ -90,8 +90,6 @@ class PExecutor:
 
     # New method of execution
     def run(self, context = None, params = None, modules = None, scope = (), **kwargs):
-        print('----------------------------------------')
-        print('--------------PExecutor.run --> ')
         return self.execute(P_KEY_TEST, context, params, scope, modules = modules)
     
     # deprecated way to use from client side
@@ -114,35 +112,11 @@ class PExecutor:
         
         if params is None:
              params = self.get_params() if self.get_params() is not None else ''
-     
-        modules = None
-        if 'modules' in kwargs:
-            modules = kwargs.get('modules')
-            print('Modules got from args: {0}'.format(modules))
 
-        if modules is None:
-            modulesParam = oppval('modules', context)
-            if (modulesParam != None):
-                modules = opplistvals(modulesParam)
-            print('Modules got from context: {0}'.format(modules))
-
-        if modules is None:
-             print('Modules got from executor: {0}'.format(str(self.get_modules())))
-             modules = self.get_modules() if self.get_modules() is not None else []
-
-        print('----------------------------------------')
-        print('--------------PExecutor ver:' + self.version() + ' opp ver: ' + __version__)
-        print('----------------------------------------')
-        print('Python version:' + str(sys.version_info))
-        print('Execute' + command)
-        print('context:' + context)
-        print('params:' + params)
-        print('modules:' + str(modules))
-        print('range:' + str(paramRange))
         outDir = oppval('dout', context)
         if outDir == None:
             outDir = '.'
-
+     
         execDir = createNewExecId(outDir)
     
 #        if (command == KEY_LEARN or command == KEY_SEGMENT):
@@ -150,6 +124,34 @@ class PExecutor:
  #       else:
   #          testListDir = None
         self.initLogFiles(outDir, execDir, testListDir)
+
+        modules = None
+        if 'modules' in kwargs:
+            modules = kwargs.get('modules')
+            self.dbgl('Modules got from args: {0}'.format(modules))
+
+        if modules is None:
+            modulesParam = oppval('modules', context)
+            if (modulesParam != None):
+                modules = opplistvals(modulesParam)
+            self.dbgl('Modules got from context: {0}'.format(modules))
+
+        if modules is None:
+             print('Modules got from executor: {0}'.format(str(self.get_modules())))
+             modules = self.get_modules() if self.get_modules() is not None else []
+
+        self.dbgl('======================================================================')
+        self.dbgl(' ======= PExecutor ver: {0}  opp ver: {1} ============================ '.format(self.version(),__version__))
+        self.dbgl('Python version:' + str(sys.version_info))
+        self.dbgl('Execute' + command)
+        self.dbgl('context:' + context)
+        self.dbgl('params:' + params)
+        self.dbgl('modules:' + str(modules))
+        self.dbgl('range:' + str(paramRange))
+        self.dbgl('======================================================================')
+
+
+
         
         if not self.session_started:
             #self.summaryLog.writeAsAppendLine('TestEngineVersion=' + self.version() + ';', True)
@@ -276,9 +278,10 @@ class PExecutor:
                     self.dbgl("CONST " + newConsOpp)
                     
                     caseTree = self.buildCaseTree(test_params, condMods, newConsOpp, paramRange)
-                    self.dbgl("====================")
+                    self.dbgl("---- Case tree -------")
                     for case in caseTree:
                         self.dbgl(case)
+                    self.dbgl("----------------------")
                 else:
                     #if (prepareDataNeeded):
                     #    test_params = oppmodify(test_params,opp(KEY_PREPAREDATA,'1'))
@@ -307,11 +310,11 @@ class PExecutor:
             
             #test.setExecDir(execDir)
             finalCaseList = self.prepareChain(finalCaseList)
+
+            self.dbgl('Final test list: {0}'.format([oppval(P_KEY_TESTNAME, t) for t in finalCaseList]))
+
             for c in finalCaseList:
-                print(c)
                 self.testlistLog.writeAsAppendLine(c, True)
-                self.dbgl(opp(P_KEY_TESTNAME, oppval(P_KEY_TESTNAME, c)) + '\n')
-            
             
             result = self.executeChain(execDir, context, finalCaseList, modules = modules)
             
@@ -382,7 +385,7 @@ class PExecutor:
             
 
             
-            self.dbgl('Execute ' +  test_name)
+            self.dbgl('Execute {0} =============> '.format(test_name))
             
     
             #medlearn.learnInit(test)
@@ -458,15 +461,15 @@ class PExecutor:
                     module = None
                     moduleToLoadFromSource = False # whether module should be loaded from file
                     if isinstance(mod, str):
-                        print("Execute module by string: {0} ".format(mod))
+                        self.dbgl("Execute module by string: {0}  ------------->".format(mod))
                         modName = mod
                         moduleToLoadFromSource = True
                     elif isinstance(mod, PModule):
-                        print("Execute module by module object: {0} ".format(mod))
+                        self.dbgl("Execute module by module object: {0}  ------------->".format(mod))
                         modName = mod.getName()
                         module = mod
                     elif isinstance(mod, types.FunctionType):
-                        print("Execute module by function: {0} ".format(mod))
+                        self.dbgl("Execute module by function: {0} ------------->".format(mod))
                         module = Mod(mod)
                         modName = module.getName()
 
@@ -511,29 +514,30 @@ class PExecutor:
 
                             init_func = module.get_func_init()
                             if init_func is not None:
-                                print("Call module init by handler")
+                                self.dbgl("Call module init by handler")
                                 init_func(module, test_name, context)
                             else:
-                                print("Call module init by module method")
+                                self.dbgl("Call module init by module method")
                                 module.init(test_name, context)
 
                             #test.addModule(module)  TODO-abak-test
                             exec_func = module.get_func_exec()
                             if exec_func is not None:
-                                print("PExecutor::Call module exec by handler. Type of token {0}".format(type(tokenData)))
+                                self.dbgl("PExecutor::Call module exec by handler. Type of token {0}".format(type(tokenData)))
                                 tokenData = exec_func(module, testParams, tokenData)
                             else:
-                                print("PExecutor::Call module exec by module method. Type of token {0}".format(type(tokenData)))
+                                self.dbgl("PExecutor::Call module exec by module method. Type of token {0}".format(type(tokenData)))
                                 tokenData = module.execute(testParams, tokenData)
 
                             test.setTokenData(tokenData)
+                            self.dbgl(' end of module {0} execution -------------|'.format(mod))
 
                         else:
-                            self.dbgl('Module ' + mod + 'SKIPPED')
+                            self.dbgl(' -------------> Module ' + mod + 'SKIPPED  -------------|')
                     else:
-                        self.dbgl("executeChain: empty module name. SKIPPED")
+                        self.dbgl(" -------------> executeChain: empty module name. SKIPPED -------------|")
             else:
-                self.dbgl("executeChain: Empty list of modules. Nothing to do.")
+                self.dbgl(" -------------> executeChain: Empty list of modules. Nothing to do. -------------|")
             # else:
             #     self.dbgl("executeChain: modules to run not defined")
         
@@ -544,6 +548,8 @@ class PExecutor:
                 resFile.write(P_NEW_LINE)
                 resFile.close()
           
+            self.dbgl('End of test {0} extection ==================|'.format(test_name))
+
         return test    
   
             #TODO uncomment

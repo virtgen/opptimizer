@@ -197,7 +197,7 @@ class PModule(PExecutable):
     def execute(self, params, tokenData = None):
         
         testName = oppval(P_KEY_TESTNAME, params)
-        self.dbgopen()
+        #self.dbgopen()
         
         executionParams = oppmodify(self.getContext(), params)
         if self.getLogFileName() != None:
@@ -223,7 +223,7 @@ class PModule(PExecutable):
                 self.writeToResultFile('\n')
                 
             #self.writeToResultFile(opp('testName', testName) + ';')
-            self.resultFileClose();
+            self.resultFileClose()
         
         
         if (not self.skipExe):
@@ -233,13 +233,14 @@ class PModule(PExecutable):
             p.wait()
             self.setExecresult(p.returncode)
             self.dbgopen()
+            self.dbgl("module " + self.name +  " exe finished with return " + str(self.getExecResult()))
         else:
             self.dbgl("Native execution skipped for module " + self.name)
             
         
         
-        self.dbgl("module " + self.name +  " finished with return " + str(self.getExecResult()))
-        self.dbgclose()
+        
+        #self.dbgclose()
         
         return tokenData
         
