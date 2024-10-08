@@ -62,14 +62,32 @@ def oppbool(key, val):
     valToSet = '1' if val and (val == True or val==1 or val=='1' or val == 'T' or val == 't') else '0'
     return opp(key, valToSet)
 
-# Returns True if val is '1' or 'True' or 'true' or 'T' or 't's
-# False othewise (or if no key found in paramssss)
-def oppvalbool(key, params):
-    
+# Returns bool val from params
+def oppvalbool(key, params, default = 'False'):
+    ''' # Returns True if val is '1' or 'True' or 'true' or 'T' or 't's
+        # False othewise (or if no key found in paramssss)
+        # Val returned as default: False if not set
+    '''
     result = False
-    val = oppval(key, params)
+    val = oppval(key, params, default)
     if val =='1' or val == 'True' or val == 'true' or val == 'T' or val == 't':
         result = True
+    
+    return result
+
+# Returns int val from params
+def oppvalint(key, params, default = None):
+    ''' # Returns int if val can be converted to int, default otherwise
+        (if default param is not set it returns None) 
+    '''
+    result = None
+    val = oppval(key, params, default)
+    try:
+        if isinstance(val, str):
+            val = val.strip()
+        result = int(val)
+    except ValueError:
+        result = default
     
     return result
 

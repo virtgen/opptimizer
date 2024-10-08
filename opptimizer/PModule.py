@@ -191,6 +191,16 @@ class PModule(PExecutable):
                 resolvedInputPath = PPath(inputPath)
                 
         self.setInputPath(resolvedInputPath)
+
+    # Get subdir dof output
+    def getOutputSubDir(self, fileToProcess):
+        ''' Returns subdir in output for SUBDIR OUTPUT logic'''
+        testExecDir = self.getCurrentTest().getTestExecDir()
+        outputPPath = PPath(PPath(fileToProcess).getBasename(), parent = testExecDir)
+        outputPPath.createDirIfNone()
+        outputDir = outputPPath.getPath()
+
+        return outputDir
     
     # Executes module
     # Returns tokenData (custom global data for tests execution) 

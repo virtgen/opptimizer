@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.2.5] - 2024-10-09
+- added utlis functions
+
+## [2.2.4] - 2024-09-24
+- added oppvalint func
+
 ## [2.2.2] - 2024-08-05
 - Improved logs from executions
 

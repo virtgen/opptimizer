@@ -15,8 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .opp import *
 from .pcons import *
-
+from .PPath import *
 
 
 MEDBASE_VER = 1
@@ -147,4 +148,31 @@ def set_getPairsAndFiles(pairs, file_name):
     print(' == PAIRS: ' + str(pairs) + ' ' + str(files))
     
     return pairs, files
+
+# Get value from file or params
+def getValFromFileOrParam(params, fileKeyOpp, keyOpp, defaultFileName, defaultVal = None, fileDir = '.'):
+    '''
+        fileDir - PPath object
+
+        Returns value obtained in following order:
+        1. Try to load value from file (file name defined by fileDir/fileKeyOpp, if not given the defaultFileName used)
+        2. I value from file not available, try to get from params (key defined by keyOpp)
+        2. I value for given key not available in params the default value is used
+    '''
+    result = None
+
+    oppFile = oppval(fileKeyOpp, params, default = defaultFileName)
+
+    oppFilePath = None
+    if oppFile is not None:
+        oppFilePath = PPath(oppFile, parent=fileDir)
+
+    if oppFilePath is not None and oppFilePath.exists():
+        oppFilePath.open('r')
+        result = oppFilePath.readLines(join_lines = True)
+        oppFilePath.close()
+    else:
+        result = oppval(keyOpp, params, default = defaultVal)
+
+    return result
 
