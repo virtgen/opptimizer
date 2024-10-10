@@ -18,6 +18,8 @@
 from .opp import *
 from .pcons import *
 from .PPath import *
+import importlib.util
+import sys
 
 
 MEDBASE_VER = 1
@@ -175,4 +177,18 @@ def getValFromFileOrParam(params, fileKeyOpp, keyOpp, defaultFileName, defaultVa
         result = oppval(keyOpp, params, default = defaultVal)
 
     return result
+
+def addModulesPath(additionalPath):
+    ''' Add additinal path to sys.path'''
+    sys.path.append(additionalPath)
+
+def importModuleIfExist(module_name, additionalPath = None):
+    ''' Checks if module (.py) exists. Add additionalPath to sys if given'''
+    if additionalPath is not None:
+        addModulesPath(additionalPath)
+
+    if importlib.util.find_spec(module_name) is not None:
+        return True
+    else:
+        return False
 

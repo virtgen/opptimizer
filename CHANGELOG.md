@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.2.6] - 2024-10-09
+- added importing modules from additional path
+
 ## [2.2.5] - 2024-10-09
 - added utlis functions
 

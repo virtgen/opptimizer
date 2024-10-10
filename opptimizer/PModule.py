@@ -201,6 +201,7 @@ class PModule(PExecutable):
         outputDir = outputPPath.getPath()
 
         return outputDir
+
     
     # Executes module
     # Returns tokenData (custom global data for tests execution) 
