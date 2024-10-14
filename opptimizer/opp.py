@@ -143,12 +143,15 @@ def opplistvals(listval):
     return result
 
 # Returns the list made of values for given key
-def opptolist(key, params):
+def opptolist(key, params, default = None):
+    ''' If no key defined in params the default is returned '''
     result = None
     
     val = oppval(key, params)
     if val:
         result = opplistvals(val)
+    else:
+        result = default
 
     return result
 

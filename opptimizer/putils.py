@@ -180,7 +180,9 @@ def getValFromFileOrParam(params, fileKeyOpp, keyOpp, defaultFileName, defaultVa
 
 def addModulesPath(additionalPath):
     ''' Add additinal path to sys.path'''
-    sys.path.append(additionalPath)
+    path = os.path.normpath(additionalPath) # just to avoid problem with complex path like "dir/../../dir2/../..""
+    if path not in sys.path:
+        sys.path.append(path)
 
 def importModuleIfExist(module_name, additionalPath = None):
     ''' Checks if module (.py) exists. Add additionalPath to sys if given'''

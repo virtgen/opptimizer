@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.2.7] - 2024-10-10
+- added normpath to utils
+
 ## [2.2.6] - 2024-10-09
 - added importing modules from additional path
 
