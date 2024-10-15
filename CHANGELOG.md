@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.2.8] - 2024-10-15
+- added tests number to logs
+
 ## [2.2.7] - 2024-10-10
 - added normpath to utils
 

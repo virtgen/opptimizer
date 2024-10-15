@@ -17,9 +17,8 @@
 
 from .opp import *
 from .pcons import *
-from .PPath import *
 import importlib.util
-import sys
+import sys, os
 
 
 MEDBASE_VER = 1
@@ -161,6 +160,7 @@ def getValFromFileOrParam(params, fileKeyOpp, keyOpp, defaultFileName, defaultVa
         2. I value from file not available, try to get from params (key defined by keyOpp)
         2. I value for given key not available in params the default value is used
     '''
+    from .PPath import PPath    # import hereto avoid cyclic import at application start
     result = None
 
     oppFile = oppval(fileKeyOpp, params, default = defaultFileName)

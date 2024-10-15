@@ -55,6 +55,7 @@ class PExecutor:
         #self.summaryLog = None
         self.execLog = None
         self.testlistLog = None
+        self.lasttestLog = None
         self.resultFilePath = None
         self.execDir = PPath()
         self.testExecDir = PPath()
@@ -313,6 +314,8 @@ class PExecutor:
 
             self.dbgl('Final test list: {0}'.format([oppval(P_KEY_TESTNAME, t) for t in finalCaseList]))
 
+            lastTestName = oppval(P_KEY_TESTNAME, finalCaseList[-1],'None')
+            self.lasttestLog.writeAsAppendLine(lastTestName, True)
             for c in finalCaseList:
                 self.testlistLog.writeAsAppendLine(c, True)
             
@@ -561,6 +564,7 @@ class PExecutor:
         #rootSummaryFileName = outDir + '/' + P_SUMMARY_FILENAME
         execSummaryFileName = execDir + '/' + P_EXEC_FILENAME
         testListFileName = execDir + '/' + P_TESTLIST_FILENAME
+        lastTestFileName = execDir + '/' + P_LASTTEST_FILENAME
         
         #self.summaryLog = PPath(rootSummaryFileName, "summary")
         #self.summaryLog.open('a')
@@ -570,6 +574,9 @@ class PExecutor:
         if (testListDir != None):
             self.testlistLog = PPath(testListFileName, "testList")
             self.testlistLog.open('a')
+            self.lasttestLog = PPath(lastTestFileName, "lasttestLog")
+            self.lasttestLog.open('a')
+            
         
         self.resultFilePath = execDir + '/' + P_RESULT_FILENAME
         

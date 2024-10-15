@@ -45,6 +45,8 @@ class PPath(PObject):
                 if postfix != None:
                     path = path + postfix
                 if parent != None:
+                    if (isinstance(parent, PPath)):
+                        parent = parent.getPath()
                     path = parent + P_DIR_SEP + path
                           
             self._path = path
@@ -257,7 +259,7 @@ class PPath(PObject):
             prefix = prefix if prefix else ''
             postfix = postfix if postfix else ''
              
-            if (self.isDir() and self.exists()): 
+            if (self.exists() and self.isDir()): 
                 filePattern = prefix + pattern + postfix
                 dir_files = sorted(glob.glob(self.getPath() + P_DIR_SEP + filePattern), key=key, reverse=reverse) #, key=sortKeyForFiles, reverse=ctx_train_reverse)
                 result = dir_files

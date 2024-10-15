@@ -50,6 +50,7 @@ P_SUMMARY_FILENAME = 'summary-log.txt'
 P_EXEC_FILENAME = 'exec-log.txt'
 P_RESULT_FILENAME = 'result.txt'
 P_TESTLIST_FILENAME = 'testlist.txt'
+P_LASTTEST_FILENAME = 'lasttest.txt'
 P_TESTCHAIN_FILENAME = 'testchain-log.txt'
 
 PSERVICE_MAX_PARAMS_MSG_LEN = 1024 * 5
