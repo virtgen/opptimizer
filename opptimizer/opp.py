@@ -82,12 +82,13 @@ def oppvalint(key, params, default = None):
     '''
     result = None
     val = oppval(key, params, default)
-    try:
-        if isinstance(val, str):
-            val = val.strip()
-        result = int(val)
-    except ValueError:
-        result = default
+    if val is not None:
+        try:
+            if isinstance(val, str):
+                val = val.strip()
+            result = int(val)
+        except ValueError:
+            result = default
     
     return result
 

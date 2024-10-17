@@ -244,11 +244,13 @@ class PPath(PObject):
             
             return result
         
-        def readLines(self, join_lines = False):
+        def readLines(self, join_lines = False, strip_newlines = False, join_sep = ''):
             if self.isOpened():
                 lines = self._file.readlines()
                 if join_lines:
-                    lines = ''.join(lines)        
+                    lines = join_sep.join(lines)        
+                    if strip_newlines:
+                        lines = lines.replace('\n','')
                 return lines
         
         # Returns list of files in directory

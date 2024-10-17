@@ -1,7 +1,10 @@
 # Change Log
 
+## [2.2.9] - 2024-10-15
+- added sep to PPath.readlines
+
 ## [2.2.8] - 2024-10-15
-- added tests number to logs
+- added last test name to logs, fix PPath vs putils
 
 ## [2.2.7] - 2024-10-10
 - added normpath to utils
