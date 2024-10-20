@@ -19,11 +19,15 @@ from .opp import *
 from .pcons import *
 import importlib.util
 import sys, os
+from pathlib import Path
 
 
 MEDBASE_VER = 1
 
 _PRINT_LOG_ENABLED = True
+
+EX_MODULE_BASE = 'ex_module_base'
+EX_MODULE_CUSTOM = 'ex_module_custom'
 
 def medbaseversion():
     return 'b' + str(MEDBASE_VER)
@@ -193,4 +197,13 @@ def importModuleIfExist(module_name, additionalPath = None):
         return True
     else:
         return False
+    
+def resolveExModule(module_name, module_type = EX_MODULE_BASE):
+    resolved = False
+
+    if module_type == EX_MODULE_BASE:
+        path = Path(__file__).parent / "../.."
+
+    resolved = importModuleIfExist('atwutils', path)
+    return resolved
 

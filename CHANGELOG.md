@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.2.11] - 2024-10-20
+- added patternsplit
+
+## [2.2.10] - 2024-10-18
+- added resolveExModule
+
 ## [2.2.9] - 2024-10-15
 - added sep to PPath.readlines
 

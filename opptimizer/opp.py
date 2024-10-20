@@ -235,3 +235,29 @@ def opprange(key, *rangeVals):
     for val in rangeVals:
         resultList.append(val)
     return resultList
+
+def patternsplit(patternExtended, defaultParent = None):
+    ''' Splits extended patern which is a tuple of items (val:src->) e.g. (file:source_directory->target name)
+        Target name should be only used if pattern file points single file only 
+    '''
+    pattern = None
+    parentDir = None
+    targetPattern = None
+    
+    if patternExtended is not None:
+            patternParts = patternExtended.split('->')
+            pattern_and_dir = patternParts[0]
+
+            if len(patternParts) > 1:
+                targetPattern = patternParts[1]
+            else:
+                targetPattern = pattern
+
+            pattern_and_dir_tokens = pattern_and_dir.split(':')
+            pattern = pattern_and_dir_tokens[0]
+            if len(pattern_and_dir_tokens) > 1:
+                parentDir = pattern_and_dir_tokens[1]
+            else:
+                parentDir = defaultParent
+
+    return (pattern, parentDir, targetPattern)
