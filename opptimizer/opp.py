@@ -92,6 +92,30 @@ def oppvalint(key, params, default = None):
     
     return result
 
+# Returns float val from params
+def oppvalfloat(key, params, default = None):
+    ''' # Returns float if val can be converted to float, default otherwise
+        (if default param is not set it returns None) 
+    '''
+    result = None
+    val = oppval(key, params, default)
+    if val is not None:
+        try:
+            if isinstance(val, str):
+                val = val.strip()
+            result = float(val)
+        except ValueError:
+            result = default
+    
+    return result
+
+def is_float(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
+
 #returns first key from params
 def oppkey(params):
     key = None

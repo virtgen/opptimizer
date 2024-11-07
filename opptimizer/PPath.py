@@ -299,6 +299,44 @@ class PPath(PObject):
     #defines the key from filename used for loading files in proper order 
         def sortByPaths(x):
             return x
+        
+        def parseCfgFile(self):
+            context = ''
+    
+            oppdbg("ppath::parseCfgFile:" + self.getPath())
+          
+            if self.exists():
+                
+                self.open()
+                content = self.readLines()
+                
+                for item in content:
+                    #print('item'+item)
+                    item = item.split('\n')[0]
+                    #TODO: add check if line is correct OPP string
+                    context = oppsum(context, item)
+                    
+                self.close()
+            else:
+                oppdbg(WARN_KEY + 'ppath::parseCfgFile: path not exists:' + self.getPath())
+
+                
+            oppdbg("ppath::parseCfgFile: context from cfg:" + context)   
+            
+            return context 
+
+        def context(self, context=''):
+            ''' Read context from this PPath file if contains one
+                This context from file is then merged with context param'''
+
+            #context = oppmodify(context, 'dcfg=' + self.getPath())
+            
+            if self.getPath() != None:
+                cfgContext = self.parseCfgFile()
+                if (cfgContext != ''):
+                    context = oppsum(context, cfgContext) 
+
+            return context
 
         
         

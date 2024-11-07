@@ -1,5 +1,12 @@
 # Change Log
 
+
+## [2.3.0] - 2024-11-06
+- cfg file parsing moved to PPath
+
+## [2.2.12] - 2024-10-21
+- fix for lastname in executor
+
 ## [2.2.11] - 2024-10-20
 - added patternsplit
 

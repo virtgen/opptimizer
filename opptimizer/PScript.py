@@ -53,42 +53,14 @@ class PScript(PExecutable):
                 if oppkey(arg) != None:
                     context = oppmodify(context, arg)
 
-        
         cfgFile = oppval('dcfg', context)
         if cfgFile != None:
-            cfgContext = self.parseCfgFile(cfgFile)
-            if (cfgContext != ''):
-                context = oppsum(context, cfgContext) 
+
+            ctxFromCfg = PPath(cfgFile).context()
+
+            if ctxFromCfg and ctxFromCfg != '':
+                context = oppsum(context, ctxFromCfg) 
             
         return context
     
-    def parseCfgFile(self, cfgFile):
-        context = ''
-        
-        print("parseCfgFile:" + cfgFile)
-    
-        if (cfgFile != None):
-            
-            cfg = PPath(cfgFile)
-            
-            if cfg.exists():
-                
-                cfg.open()
-                content = cfg.readLines()
-                
-                for item in content:
-                    print('item'+item)
-                    item = item.split('\n')[0]
-                    #TODO: add check if line is correct OPP string
-                    context = oppsum(context, item)
-                    
-                cfg.close()
-            else:
-                print('WARN parseCfgFile: path not exists:' + cfg.getPath())
-        else:
-            print('WARN parseCfgFile: path not exists:' + cfg.getPath())
-            
-        print("context from cfg:" + context)   
-        
-        return context 
         

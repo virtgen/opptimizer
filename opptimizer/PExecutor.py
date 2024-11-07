@@ -90,7 +90,15 @@ class PExecutor:
             self.execLog.dbgl(textToWrite)
 
     # New method of execution
-    def run(self, context = None, params = None, modules = None, scope = (), **kwargs):
+    def run(self, context = None, params = None, modules = None, scope = (), cfg = None, **kwargs):
+        ''' If cfg param not none, it loads addicional context from file '''
+        if cfg is not None:
+             ctxFromFile = PPath(cfg).context()
+             if ctxFromFile and ctxFromFile != '':
+                  if context is None:
+                       context = ''
+                  context = oppmodify(context, ctxFromFile)
+
         return self.execute(P_KEY_TEST, context, params, scope, modules = modules)
     
     # deprecated way to use from client side
@@ -313,8 +321,10 @@ class PExecutor:
             finalCaseList = self.prepareChain(finalCaseList)
 
             self.dbgl('Final test list: {0}'.format([oppval(P_KEY_TESTNAME, t) for t in finalCaseList]))
-
-            lastTestName = oppval(P_KEY_TESTNAME, finalCaseList[-1],'None')
+            if finalCaseList and len(finalCaseList)>0: 
+                lastTestName = oppval(P_KEY_TESTNAME, finalCaseList[-1],'None')
+            else:
+                lastTestName = 'None'
             self.lasttestLog.writeAsAppendLine(lastTestName, True)
             for c in finalCaseList:
                 self.testlistLog.writeAsAppendLine(c, True)
@@ -468,12 +478,12 @@ class PExecutor:
                         modName = mod
                         moduleToLoadFromSource = True
                     elif isinstance(mod, PModule):
-                        self.dbgl("Execute module by module object: {0}  ------------->".format(mod))
+                        self.dbgl("Execute module by module object: {0}  ------------->".format(mod.getName()))
                         modName = mod.getName()
                         module = mod
                     elif isinstance(mod, types.FunctionType):
-                        self.dbgl("Execute module by function: {0} ------------->".format(mod))
                         module = Mod(mod)
+                        self.dbgl("Execute module by function: {0} ------------->".format(module.getName()))
                         modName = module.getName()
 
                     if (modName != ''):
@@ -533,7 +543,7 @@ class PExecutor:
                                 tokenData = module.execute(testParams, tokenData)
 
                             test.setTokenData(tokenData)
-                            self.dbgl(' end of module {0} execution -------------|'.format(mod))
+                            self.dbgl(' end of execution for module {0} -------------|'.format(module.getName()))
 
                         else:
                             self.dbgl(' -------------> Module ' + mod + 'SKIPPED  -------------|')
