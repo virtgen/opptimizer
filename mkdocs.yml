@@ -1,0 +1,26 @@
+site_name: Opptimizer Documentation
+nav:
+  - Home: index.md
+  - Usage:
+    - Installation: installation.md
+    - Basic usage: usage.md
+    - Examples: examples.md
+  - Advanced Topics:
+    - Execution Modes: exec-modes.md
+    - Context Management: context-management.md
+  - API Reference: 
+    - Classes and methods: reference.md
+  - Other:
+    - Contributing: contributing.md
+    - FAQs: faq.md
+    - Release Notes: release-notes.md
+theme:
+  name: readthedocs
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          show_source: false
+          # You can customize options here, like:
+          docstring_style: google  # Optional, use "numpy", "google", or "sphinx"

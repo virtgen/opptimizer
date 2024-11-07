@@ -88,6 +88,9 @@ class PPath(PObject):
                 self.path = path 
     
         def getPath(self):
+            """
+            Returns the path.
+            """
             return self.path
         
         # Adds part of path to current path

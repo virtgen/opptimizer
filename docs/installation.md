@@ -1,8 +1,3 @@
-# opPtimizer
-
-Optimization framework for AI.
-
-## Installation
 
 ### Install Opptimizer from PyPI
 Appropriate for most use cases.

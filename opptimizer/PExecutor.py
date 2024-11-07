@@ -44,7 +44,10 @@ DBG_RESULT = False
 #session_started = False
 
 class PExecutor:
-    def __init__(self, context = None, params = None, modules = None):
+    def __init__(self, context = None, params = None, modules = None, cfg = None):
+
+        if cfg is not None:
+             context = self.load_cfg_to_context(cfg, context)
 
         self.set_context(context)
         self.set_params(params)
@@ -89,23 +92,36 @@ class PExecutor:
         if self.execLog != None and self.execLog.isOpened():
             self.execLog.dbgl(textToWrite)
 
+    def setCfg(self,cfg):
+        if cfg is not None:
+            ctxFromFile = PPath(cfg).context()
+            if ctxFromFile and ctxFromFile != '':
+                context = self.get_context()
+                if context is None:
+                    context = ''
+                context = oppmodify(context, ctxFromFile)  
+    
+    def load_cfg_to_context(self, cfg_file, existing_context):
+        ''' Load context from config file and merge it with existing_context'''
+        if cfg_file is not None:
+             ctxFromFile = PPath(cfg_file).context()
+             if ctxFromFile and ctxFromFile != '':                
+                  if existing_context is None:
+                       existing_context = ''
+                  existing_context = oppmodify(existing_context, ctxFromFile)
+        return existing_context
+    
     # New method of execution
     def run(self, context = None, params = None, modules = None, scope = (), cfg = None, **kwargs):
         ''' If cfg param not none, it loads addicional context from file '''
-        if cfg is not None:
-             ctxFromFile = PPath(cfg).context()
-             if ctxFromFile and ctxFromFile != '':
-                  if context is None:
-                       context = ''
-                  context = oppmodify(context, ctxFromFile)
+        context = self.load_cfg_to_context(cfg, context)
 
         return self.execute(P_KEY_TEST, context, params, scope, modules = modules)
     
     # deprecated way to use from client side
     def execute(self, command = None, context = None, params = None, *paramRange, **kwargs):
         result = None
-        
-        '''    
+        '''  
             Modules are extracted in following order (only one point is selected):
                 1. modules list in kwargs (key='modules')
                 2. modules param in context ('modules=..') - only modules names as strings
@@ -113,7 +129,19 @@ class PExecutor:
 
             Context and params are taken from PExecutor.context and PExecutor.params 
                 and can be overriden by arguments of this method
+            NOTE: calling this method directly (instead of 'run') does not load the context from configuration file
         '''
+
+        base_context = self.get_context()
+
+        if base_context is not None:
+            if context is not None:
+                context = oppmodify(base_context, context)
+            else:
+                context = base_context
+        else:
+             pass # context from method param is used
+             
 
         if context is None:
              context = self.get_context() if self.get_context() is not None else ''
@@ -125,6 +153,9 @@ class PExecutor:
         outDir = oppval('dout', context)
         if outDir == None:
             outDir = '.'
+
+        if len(paramRange[0]) == 0:
+             paramRange = (opprange('exmode', 'single'),)
      
         execDir = createNewExecId(outDir)
     
@@ -275,7 +306,7 @@ class PExecutor:
                 condMods = self.cleanCondMods(condMods, context)
                 
                 self.dbgl("Clean condMods: " + str(condMods))
-                
+
                 if paramRange[0] != None:
                     
                     newConsOpp = getDescriptionForProps(refTest)
