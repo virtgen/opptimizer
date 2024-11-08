@@ -14,6 +14,6 @@ build:
 
 # Python configuration for installing dependencies
 python:
-  version: ">=3.8"  # Specify Python version
+  version: "3.12"  # Specify Python version
   install:
     - requirements: requirements.txt  # Install dependencies listed in a requirements file (if applicable)
