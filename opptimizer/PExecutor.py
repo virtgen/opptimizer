@@ -19,6 +19,7 @@ import glob
 import sys
 import time
 import os
+import shutil
 import importlib.util
 import types
 
@@ -111,12 +112,55 @@ class PExecutor:
                   existing_context = oppmodify(existing_context, ctxFromFile)
         return existing_context
     
+
+
+    def remove_selected_dirs(self, path, dirs_to_clean, dirs_to_exclude=None):
+        """
+        Removes specified directories from the given path while excluding specified directories.
+        Only considers directories whose basenames start with 'exec-'.
+
+        Parameters:
+        - path (str): The base path where directories should be checked.
+        - dirs_to_clean (set or list): Names of directories that should be removed.
+        - dirs_to_exclude (set or list, optional): Names of directories to be excluded from removal.
+        """
+        dirs_to_exclude = dirs_to_exclude or set()  # Default to an empty set if not provided
+
+        removed = []
+        excluded = []
+        execDirPath = PPath(path)
+        if execDirPath.exists():
+            for item in execDirPath.getDirFiles():
+                baseName = PPath(item, basename=True).getPath()
+                #print(f'-{baseName}, {item}')
+                if os.path.isdir(item) and baseName.startswith('exec-'):
+                    if (dirs_to_clean is None or baseName in dirs_to_clean)  and baseName not in dirs_to_exclude:
+                        shutil.rmtree(item)
+                        removed.append(baseName)
+                    elif baseName in dirs_to_exclude:
+                        excluded.append(baseName)
+            print('Clean:Removed dirs:[{0}], excluded dirs:[{1}]'.format(removed, excluded))
+        else:
+            print('Clean: exec path {0} not exists'.format(execDirPath.getPath()))
+
+
+    def cleanExecDirs(self, path_to_clean, parmsUnion):
+        ''' Removes exec dirs from path_to_clean
+            Can be limited to files defined in 'cleanInclude' and exclude files defined in 'cleanExclude' ''' 
+        
+        directories_to_clean = opptolist('cleanInclude', parmsUnion, default = None)
+        directories_to_exclude  = opptolist('cleanExclude', parmsUnion, default = None)
+        print("cleanExecDirs, path_to_clean:{0}, include:{1}, exclue:{2}".format(path_to_clean, directories_to_clean, directories_to_exclude))
+        self.remove_selected_dirs(path_to_clean, directories_to_clean, directories_to_exclude)
+
+        return
+    
     # New method of execution
-    def run(self, context = None, params = None, modules = None, scope = (), cfg = None, **kwargs):
+    def run(self, tokenData = None, context = None, params = None, modules = None, scope = (), cfg = None, **kwargs):
         ''' If cfg param not none, it loads addicional context from file '''
         context = self.load_cfg_to_context(cfg, context)
 
-        return self.execute(P_KEY_TEST, context, params, scope, modules = modules)
+        return self.execute(P_KEY_TEST, context, params, scope, modules = modules, tokenData = tokenData)
     
     # deprecated way to use from client side
     def execute(self, command = None, context = None, params = None, *paramRange, **kwargs):
@@ -150,6 +194,8 @@ class PExecutor:
         if params is None:
              params = self.get_params() if self.get_params() is not None else ''
 
+        paramsUnion = oppmodify(context, params)
+
         outDir = oppval('dout', context)
         if outDir == None:
             outDir = '.'
@@ -157,6 +203,10 @@ class PExecutor:
         if len(paramRange[0]) == 0:
              paramRange = (opprange('exmode', 'single'),)
      
+        removeExecDirs = oppvalbool('clean', paramsUnion, 'False')
+        if removeExecDirs:
+            self.cleanExecDirs(outDir, paramsUnion)
+
         execDir = createNewExecId(outDir)
     
 #        if (command == KEY_LEARN or command == KEY_SEGMENT):
@@ -164,6 +214,11 @@ class PExecutor:
  #       else:
   #          testListDir = None
         self.initLogFiles(outDir, execDir, testListDir)
+
+        tokenData = None
+        if 'tokenData' in kwargs:
+             tokenData = kwargs.get('tokenData')
+             
 
         modules = None
         if 'modules' in kwargs:
@@ -360,7 +415,7 @@ class PExecutor:
             for c in finalCaseList:
                 self.testlistLog.writeAsAppendLine(c, True)
             
-            result = self.executeChain(execDir, context, finalCaseList, modules = modules)
+            result = self.executeChain(execDir, context, finalCaseList, modules = modules, tokenData = tokenData)
             
         elif command == P_KEY_FILTER or command == KEY_PLOT:
             if (inResultFile != None):
@@ -413,13 +468,14 @@ class PExecutor:
         return newTestChain
     
     # Returns last executed test if any
-    def executeChain(self, execDir, context, testchain, modules = []):
+    def executeChain(self, execDir, context, testchain, modules = [], tokenData = None):
         
         test_counter = 0
         _TIME_totalChainExecution = time.time()
         
         test = None
-        tokenData = None
+        #tokenData = None
+
         for testParams in testchain:
             test_counter += 1
     
@@ -438,13 +494,7 @@ class PExecutor:
     
             if (prepareData == '1'):
                 self.dbgl("executeChain: PrepareData is 1 !!!")
-                #itkServiceSocket = connectToServiceITK()
-                #itkServiceSocket.send(test)
-    
-                #data = itkServiceSocket.recv(MEDSERVICE_MAX_REPLY_MSG_LEN)
-                #print('Received ' +  data)
-        
-                #itkServiceSocket.close()
+                # here is the place to collect input data from external source (for future implementation)
             
             if (oppval('flatExecDir', context) == '1'):
                 flatExecDir = True
@@ -513,7 +563,7 @@ class PExecutor:
                         modName = mod.getName()
                         module = mod
                     elif isinstance(mod, types.FunctionType):
-                        module = Mod(mod)
+                        module = Mod(mod)   # mod is passed to Mod's constructor as func_exec argument
                         self.dbgl("Execute module by function: {0} ------------->".format(module.getName()))
                         modName = module.getName()
 

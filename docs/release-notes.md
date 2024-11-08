@@ -1,5 +1,8 @@
 # Release Notes
 
+[2.3.2] - 2024-11-08<br>
+- added result attribute to PTest,added cleaning of exec dirs
+
 [2.3.1] - 2024-11-07<br>
 - added mkdocs, added usnit tests, fixed context management
 

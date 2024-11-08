@@ -35,10 +35,21 @@ class PTest(PObject):
 		self.execDir = None # main execution dir (uses by executor.execute())
 		self.log = None
 		self.tokenData = None
+		
+		self.set_result(None)
+
 		return
 
 	def version(self):
 		return 't' + str(MEDTEST_VER)
+	
+	def get_result(self):
+		''' Returns the result from Module(-s) chain that will be accesible after pipeline execution '''
+		return self._result
+
+	def set_result(self, value):
+		'''Module can set the result that will be accesible after pipeline execution'''
+		self._result = value
 	
 	#def addModule(self, module):
 	#	self.modules.append(module)

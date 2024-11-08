@@ -95,6 +95,26 @@ class PModule(PExecutable):
     def getCurrentTest(self):
         return self.currentTest
     
+    def setResult(self, result):
+        ''' 
+            Sets the result to current test (if current test is defined) that will be accesible after pipeline execution.
+        '''
+        test = self.getCurrentTest()
+        if test:
+            test.set_result(result)
+
+    
+    def getResult(self):
+        ''' 
+            Returns the result stored in current test that will be accesible after pipeline execution.
+            If current test for module is not set it return None
+        '''
+        test = self.getCurrentTest()
+        if test:
+           return test.get_result()
+        else:
+            return None
+    
         # returs all params for current test    
     def getParamsEx(self):
         return self.paramsEx

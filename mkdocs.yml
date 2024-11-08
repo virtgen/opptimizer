@@ -5,8 +5,10 @@ nav:
     - Installation: installation.md
     - Basic usage: usage.md
     - Examples: examples.md
-  - Advanced Topics:
+  - Pipeline's excution:
     - Execution Modes: exec-modes.md
+    - Results from execution: results.md
+  - Advanced Topics:
     - Context Management: context-management.md
   - API Reference: 
     - Classes and methods: reference.md
