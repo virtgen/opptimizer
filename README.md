@@ -1,4 +1,8 @@
-# How to use Opptimizer
+# Introduction to Opptimizer
+Opptimizer is an optimization framework designed for AI pipelines, enabling efficient management and execution of complex processes and workflows.
+
+This section provides a quick overview of installation, basic usage, and simple examples.  
+To dive deeper, please see the full documentation at [https://opptimizer.readthedocs.io/](https://opptimizer.readthedocs.io/).
 
 ## Installation
 
