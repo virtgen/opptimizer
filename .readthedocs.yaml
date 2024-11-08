@@ -5,15 +5,4 @@ version: 2
 # Build documentation with MkDocs
 mkdocs:
   configuration: mkdocs.yml
-
-# Set the version of Python and other tools you might need
-build:
-  os: ubuntu-22.04
-  tools:
-    python: "3.12"
-
-# Python configuration for installing dependencies
-python:
-  version: "3.12"  # Specify Python version
-  install:
-    - requirements: requirements.txt  # Install dependencies listed in a requirements file (if applicable)
+  fail_on_warning: false
