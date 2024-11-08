@@ -11,6 +11,10 @@ homepage = "https://github.com/virtgen/opptimizer"
 python = "^3.8"
 matplotlib = "^3.5"
 
+[project.urls]
+"Documentation" = "https://opptimizer.readthedocs.io/"
+"Source" = "https://github.com/virtgen/opptimizer"
+"Bug Tracker" = "https://github.com/virtgen/opptimizer/issues"
 
 [build-system]
 requires = ["poetry-core"]
