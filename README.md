@@ -11,7 +11,7 @@ Installin by PyPI is appropriate for most use cases.
 ```
 pip install opptimizer
 ```
-There is also advanced way of local install described [here](advanced-installation.md).
+There is also advanced way of local install described [here](https://opptimizer.readthedocs.io/en/latest/advanced-installation).
 
 ## Basic Usage
 
