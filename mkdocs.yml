@@ -5,14 +5,17 @@ nav:
     - Installation: installation.md
     - Basic usage: usage.md
     - Examples: examples.md
-  - Pipeline's excution:
+  - Pipeline's execution:
     - Execution Modes: exec-modes.md
     - Results from execution: results.md
+    - Execution parameters: exec-params.md
   - Advanced Topics:
     - Context Management: context-management.md
   - API Reference: 
     - Classes and methods: reference.md
   - Other:
+    - GitHub: https://github.com/virtgen/opptimizer.git
+    - PyPI: https://pypi.org/project/opptimizer/
     - Contributing: contributing.md
     - FAQs: faq.md
     - Release Notes: release-notes.md

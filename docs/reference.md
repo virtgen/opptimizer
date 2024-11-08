@@ -8,7 +8,15 @@
 ::: opptimizer.Executor.Executor
     options:
       show_source: false
-      
+
+### `Mod`
+
+::: opptimizer.Mod.Mod
+    handler: python
+    options:
+      show_source: false
+
+
 ### `PPath`
 
 ::: opptimizer.PPath.PPath

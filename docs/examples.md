@@ -14,9 +14,7 @@ def mod_2(mod_obj, params, tokenData = None):
     tokenData = tokenData + ', result 2'
     mod_obj.setResult(tokenData)
 
-executor = op.Executor(modules = [mod_1, mod_2])
-response = executor.run('Results: ')
-
+response = op.Executor().run('Results: ', modules = [mod_1, mod_2])
 print(f"{response.get_result()}")
 ```
 

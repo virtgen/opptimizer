@@ -25,6 +25,8 @@ from .pcons import *
 from .PObject import *
 
 class PPath(PObject):
+        ''' Utility class for I/O operations (particuary filesystem) during pipeline execution.  '''
+
         def __init__(self, refPath = None, name = "PPath", parent=None,
                     prefix=None, postfix=None, basename=False, noext=False, isdirtocreate=False):
             PObject.__init__(self, name)
