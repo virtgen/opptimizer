@@ -1,11 +1,4 @@
 
-### Install Opptimizer from PyPI
-Appropriate for most use cases.
-
-```
-pip install opptimizer
-```
-
 ### Advanced local installation 
 NOTE: only for custom standalone applications.
 Don't use this without a deep understanding of how the library works in local mode.

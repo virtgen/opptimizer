@@ -8,6 +8,4 @@ This guide covers installation, getting started, and offers a deeper dive into f
 
 ---
 
-See [how to install Opptimizer](installation.md).
-
-To get started, go to [base usage](usage.md) or [usage examples](examples.md)
+To get started see [How to use Opptimizer](README_link.md).

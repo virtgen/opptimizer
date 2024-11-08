@@ -1,16 +1,14 @@
 site_name: Opptimizer Documentation
 nav:
   - Home: index.md
-  - Usage:
-    - Installation: installation.md
-    - Basic usage: usage.md
-    - Examples: examples.md
+  - Get started: README_link.md
   - Pipeline's execution:
     - Execution Modes: exec-modes.md
     - Results from execution: results.md
     - Execution parameters: exec-params.md
   - Advanced Topics:
     - Context Management: context-management.md
+    - Local installation: advanced-installation.md
   - API Reference: 
     - Classes and methods: reference.md
   - Other:
