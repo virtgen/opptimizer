@@ -1,5 +1,8 @@
 # Release Notes
 
+[2.3.4] - 2024-11-11<br>
+- Fixed path resolving, fixed executor run scope unpacking
+
 [2.3.3] - 2024-11-08<br>
 - improved documentation
 

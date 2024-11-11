@@ -198,12 +198,23 @@ def importModuleIfExist(module_name, additionalPath = None):
     else:
         return False
     
-def resolveExModule(module_name, module_type = EX_MODULE_BASE):
+def resolveExModule(module_name, path):
+    ''' Checks if module_name is exeisitin in path, before check it add path to sys.path'''
     resolved = False
-
-    if module_type == EX_MODULE_BASE:
-        path = Path(__file__).parent / "../.."
-
-    resolved = importModuleIfExist('atwutils', path)
+    resolved = importModuleIfExist(module_name, path)
     return resolved
+
+def getPatternFiles(pattern, exec_dir, output_dir):
+    ''' 
+        Returns source files and target file (if single soruce file) with use of patternsplit
+        - return tuple
+    '''
+    pattern, parentDir, targetPattern = patternsplit(pattern)
+    
+    if parentDir is not None:
+        realParent = os.path.join(exec_dir,'..', parentDir)
+    else:
+        realParent = os.path.join(output_dir)
+    path = os.path.normpath(os.path.join(realParent, pattern))
+    return (path, targetPattern)
 

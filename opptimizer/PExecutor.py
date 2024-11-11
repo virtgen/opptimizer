@@ -160,7 +160,12 @@ class PExecutor:
         ''' If cfg param not none, it loads addicional context from file '''
         context = self.load_cfg_to_context(cfg, context)
 
-        return self.execute(P_KEY_TEST, context, params, scope, modules = modules, tokenData = tokenData)
+        # prevent to treat one-element tuple as a list eg. run( scope=([a,b]) ) may be equvalent as run(scope=[a,b])
+        if not isinstance(scope, tuple):
+            scope = (scope,)
+
+        #print(f"Len: {len(scope)}, SCOPE{scope}")
+        return self.execute(P_KEY_TEST, context, params, *scope, modules = modules, tokenData = tokenData)
     
     # deprecated way to use from client side
     def execute(self, command = None, context = None, params = None, *paramRange, **kwargs):
@@ -189,6 +194,16 @@ class PExecutor:
 
         if context is None:
              context = self.get_context() if self.get_context() is not None else ''
+
+        base_params = self.get_context()
+
+        if base_params is not None:
+            if params is not None:
+                params = oppmodify(base_params, params)
+            else:
+                params = base_params
+        else:
+             pass # params from method param is used
         
         
         if params is None:
@@ -200,8 +215,9 @@ class PExecutor:
         if outDir == None:
             outDir = '.'
 
-        if len(paramRange[0]) == 0:
-             paramRange = (opprange('exmode', 'single'),)
+        print(f"PARAM RANGE:{paramRange}")
+        if len(paramRange) == 0 or len(paramRange[0]) == 0:
+             paramRange = (['exmode', 'single'],)
      
         removeExecDirs = oppvalbool('clean', paramsUnion, 'False')
         if removeExecDirs:

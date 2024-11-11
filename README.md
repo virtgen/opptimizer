@@ -38,9 +38,9 @@ executor = opptimizer.Executor(cfg="path/to/opp.cfg")
 Define the modules you intend to use. Modules can be function:
 
 ```python
-def module_exec(data):
-    # Process data in some way
-    return modified_data
+def module_exec(mod_obj, params, tokenData):
+    # Process tokenData
+    return tokenData
 ```
 or instances of the `Mod` class:
 ```python

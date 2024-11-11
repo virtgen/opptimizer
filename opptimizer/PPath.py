@@ -28,13 +28,20 @@ class PPath(PObject):
         ''' Utility class for I/O operations (particuary filesystem) during pipeline execution.  '''
 
         def __init__(self, refPath = None, name = "PPath", parent=None,
-                    prefix=None, postfix=None, basename=False, noext=False, isdirtocreate=False):
+                    prefix=None, postfix=None, basename=False, noext=False, isdirtocreate=False, deepParent = None):
+            '''
+                dedeepParent: is not None, the number causes change of relPath to its deep parent eg. '../..' for deepParent=2
+            '''
             PObject.__init__(self, name)
             
             if (isinstance(refPath, PPath)):
                 path = refPath.getPath()
             else:
                 path = refPath
+
+            if deepParent:
+                if path and isinstance(deepParent,int):
+                    path = PPath(path).getDeepParent(deepParent)
 
             if path != None:
                 if basename:
@@ -342,6 +349,17 @@ class PPath(PObject):
                     context = oppsum(context, cfgContext) 
 
             return context
-
         
+        def getDeepParent(self, parentLevel = 2, default = None):
+            ''' Returns root directory for file assuming parenting depth like '../..' for level=2'''
+            path = default
+            if self.path:
+                parentDeep = os.path.sep.join(['..'] * parentLevel)
+                path = Path(self.path).parent / parentDeep
+                path = os.path.normpath(path)
+            return path
+        
+        def getParent(self):
+            ''' Resturn direct parent '''
+            return self.getDeepParent(0)
         
