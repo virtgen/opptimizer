@@ -31,29 +31,29 @@ class PExecutable(PObject):
     def setContext(self, context):
         self.context = context
         
-    def dbg(self, txt, dbgLevel = 1):
+    def dbg(self, txt, dbgLevel = DBG_LOW_LEVEL):
         if self.logFile != None:
             self.logFile.dbg(txt, dbgLevel)
 
-    def dbgl(self, txt, dbgLevel = 1):
+    def dbgl(self, txt, dbgLevel = DBG_LOW_LEVEL):
         if self.logFile != None:
             self.logFile.dbgl(txt, dbgLevel)
 
     # Prints WARNING log (as string)
-    def wrn(self, txt, dbgLevel = 1):
+    def wrn(self, txt, dbgLevel = DBG_LOW_LEVEL):
         if self.logFile != None:
             self.logFile.wrn(txt, dbgLevel)
                 
-    def wrnl(self, txt, dbgLevel = 1):
+    def wrnl(self, txt, dbgLevel = DBG_LOW_LEVEL):
         if self.logFile != None:
             self.logFile.wrnl(txt, dbgLevel)
             
     # Prints ERROR log (as string)
-    def err(self, txt, dbgLevel = 1):
+    def err(self, txt, dbgLevel = DBG_LOW_LEVEL):
         if self.logFile != None:
             self.logFile.err(txt, dbgLevel)
                     
-    def errl(self, txt, dbgLevel = 1):
+    def errl(self, txt, dbgLevel = DBG_LOW_LEVEL):
         if self.logFile != None:
             self.logFile.errl(txt, dbgLevel)
 

@@ -33,6 +33,8 @@ P_NEW_LINE = '\n'
 
 P_PARAM_SEP = ';'
 
+P_EXECDIR_PREFIX_DEFAULT = 'exec'
+
 P_DROOT_DEFAULT = '.'
 P_DIN_DEFAULT = '_in'
 P_DOUT_DEFAULT = '_out'

@@ -89,9 +89,9 @@ class PExecutor:
     def version(self):
         return 'e'+ str(OPEXECUTE_VER)
     
-    def dbgl(self, textToWrite):
+    def dbgl(self, textToWrite, level=DBG_LOW_LEVEL):
         if self.execLog != None and self.execLog.isOpened():
-            self.execLog.dbgl(textToWrite)
+            self.execLog.dbgl(textToWrite, level)
 
     def setCfg(self,cfg):
         if cfg is not None:
@@ -114,10 +114,10 @@ class PExecutor:
     
 
 
-    def remove_selected_dirs(self, path, dirs_to_clean, dirs_to_exclude=None):
+    def remove_selected_dirs(self, path, dirs_to_clean, dirs_to_exclude=None, verbose=False, execdir_prefix = P_EXECDIR_PREFIX_DEFAULT):
         """
         Removes specified directories from the given path while excluding specified directories.
-        Only considers directories whose basenames start with 'exec-'.
+        Only considers directories whose basenames start with exec output 'exec-' (or other prefix defined by 'execdir' param).
 
         Parameters:
         - path (str): The base path where directories should be checked.
@@ -133,30 +133,33 @@ class PExecutor:
             for item in execDirPath.getDirFiles():
                 baseName = PPath(item, basename=True).getPath()
                 #print(f'-{baseName}, {item}')
-                if os.path.isdir(item) and baseName.startswith('exec-'):
+                if os.path.isdir(item) and baseName.startswith(execdir_prefix + '-'):
                     if (dirs_to_clean is None or baseName in dirs_to_clean)  and baseName not in dirs_to_exclude:
                         shutil.rmtree(item)
                         removed.append(baseName)
                     elif baseName in dirs_to_exclude:
                         excluded.append(baseName)
-            print('Clean:Removed dirs:[{0}], excluded dirs:[{1}]'.format(removed, excluded))
+            if verbose:
+                print('Clean:Removed dirs:[{0}], excluded dirs:[{1}]'.format(removed, excluded))
         else:
-            print('Clean: exec path {0} not exists'.format(execDirPath.getPath()))
+            if verbose:
+                print('Clean: exec path {0} not exists'.format(execDirPath.getPath()))
 
 
-    def cleanExecDirs(self, path_to_clean, parmsUnion):
+    def cleanExecDirs(self, path_to_clean, parmsUnion, verbose=False, execdir_prefix = P_EXECDIR_PREFIX_DEFAULT):
         ''' Removes exec dirs from path_to_clean
             Can be limited to files defined in 'cleanInclude' and exclude files defined in 'cleanExclude' ''' 
         
         directories_to_clean = opptolist('cleanInclude', parmsUnion, default = None)
         directories_to_exclude  = opptolist('cleanExclude', parmsUnion, default = None)
-        print("cleanExecDirs, path_to_clean:{0}, include:{1}, exclue:{2}".format(path_to_clean, directories_to_clean, directories_to_exclude))
-        self.remove_selected_dirs(path_to_clean, directories_to_clean, directories_to_exclude)
+        if verbose:
+            print("cleanExecDirs, path_to_clean:{0}, include:{1}, exclue:{2}".format(path_to_clean, directories_to_clean, directories_to_exclude))
+        self.remove_selected_dirs(path_to_clean, directories_to_clean, directories_to_exclude, verbose=verbose, execdir_prefix = execdir_prefix)
 
         return
     
     # New method of execution
-    def run(self, tokenData = None, context = None, params = None, modules = None, scope = (), cfg = None, **kwargs):
+    def run(self, tokenData = None, context = None, params = None, modules = None, scope = (), cfg = None, verbose = False, **kwargs):
         ''' If cfg param not none, it loads addicional context from file '''
         context = self.load_cfg_to_context(cfg, context)
 
@@ -165,7 +168,7 @@ class PExecutor:
             scope = (scope,)
 
         #print(f"Len: {len(scope)}, SCOPE{scope}")
-        return self.execute(P_KEY_TEST, context, params, *scope, modules = modules, tokenData = tokenData)
+        return self.execute(P_KEY_TEST, context, params, *scope, modules = modules, tokenData = tokenData, verbose = verbose)
     
     # deprecated way to use from client side
     def execute(self, command = None, context = None, params = None, *paramRange, **kwargs):
@@ -180,6 +183,13 @@ class PExecutor:
                 and can be overriden by arguments of this method
             NOTE: calling this method directly (instead of 'run') does not load the context from configuration file
         '''
+
+        if 'verbose' in kwargs:
+            verbose = kwargs.get('verbose')
+        else:
+            verbose = False
+        
+        DBG_LEVEL = DBG_LOW_LEVEL if verbose else DBG_MEDIUM_LEVEL
 
         base_context = self.get_context()
 
@@ -211,19 +221,22 @@ class PExecutor:
 
         paramsUnion = oppmodify(context, params)
 
-        outDir = oppval('dout', context)
+        outDir = oppval('dout', paramsUnion)
         if outDir == None:
-            outDir = '.'
+            outDir = PPath(P_DOUT_DEFAULT, parent='.').getPath()
 
-        print(f"PARAM RANGE:{paramRange}")
+        #print(f"PARAM RANGE:{paramRange}")
         if len(paramRange) == 0 or len(paramRange[0]) == 0:
              paramRange = (['exmode', 'single'],)
      
+        execdir_prefix = oppval('execdir', paramsUnion, default=P_EXECDIR_PREFIX_DEFAULT)
+
         removeExecDirs = oppvalbool('clean', paramsUnion, 'False')
         if removeExecDirs:
-            self.cleanExecDirs(outDir, paramsUnion)
+            self.cleanExecDirs(outDir, paramsUnion, verbose=verbose, execdir_prefix = execdir_prefix)
 
-        execDir = createNewExecId(outDir)
+        exactDirName = oppvalbool('execdirexact', paramsUnion, 'False')
+        execDir = createNewExecId(outDir, verbose, execdir_prefix, exactDirName=exactDirName)
     
 #        if (command == KEY_LEARN or command == KEY_SEGMENT):
         testListDir = execDir
@@ -239,7 +252,7 @@ class PExecutor:
         modules = None
         if 'modules' in kwargs:
             modules = kwargs.get('modules')
-            self.dbgl('Modules got from args: {0}'.format(modules))
+            self.dbgl('Modules got from args: {0}'.format(modules), DBG_LEVEL)
 
         if modules is None:
             modulesParam = oppval('modules', context)
@@ -251,15 +264,15 @@ class PExecutor:
              print('Modules got from executor: {0}'.format(str(self.get_modules())))
              modules = self.get_modules() if self.get_modules() is not None else []
 
-        self.dbgl('======================================================================')
-        self.dbgl(' ======= PExecutor ver: {0}  opp ver: {1} ============================ '.format(self.version(),__version__))
-        self.dbgl('Python version:' + str(sys.version_info))
-        self.dbgl('Execute' + command)
-        self.dbgl('context:' + context)
-        self.dbgl('params:' + params)
-        self.dbgl('modules:' + str(modules))
-        self.dbgl('range:' + str(paramRange))
-        self.dbgl('======================================================================')
+        self.dbgl('======================================================================',  DBG_LEVEL)
+        self.dbgl('Executor version:{0}'.format(__version__))
+        self.dbgl('Python version:' + str(sys.version_info),  DBG_LEVEL)
+        #self.dbgl('Execute' + command)
+        self.dbgl('context:' + context,  DBG_LEVEL)
+        self.dbgl('params:' + params,  DBG_LEVEL)
+        self.dbgl('modules:' + str(modules),  DBG_LEVEL)
+        self.dbgl('range:' + str(paramRange),  DBG_LEVEL)
+        self.dbgl('======================================================================',  DBG_LEVEL)
 
 
 
@@ -376,7 +389,7 @@ class PExecutor:
                 #limit conditional modules to those defined to run in context
                 condMods = self.cleanCondMods(condMods, context)
                 
-                self.dbgl("Clean condMods: " + str(condMods))
+                self.dbgl("Clean condMods: " + str(condMods), DBG_LEVEL)
 
                 if paramRange[0] != None:
                     
@@ -386,13 +399,13 @@ class PExecutor:
                     newAcceptOpp = opplist("acceptMods", *condMods)
                     newConsOpp = oppmodify(newConsOpp, newAcceptOpp)
                     
-                    self.dbgl("CONST " + newConsOpp)
+                    self.dbgl("CONST " + newConsOpp, DBG_LEVEL)
                     
                     caseTree = self.buildCaseTree(test_params, condMods, newConsOpp, paramRange)
-                    self.dbgl("---- Case tree -------")
+                    self.dbgl("---- Case tree -------", DBG_LEVEL)
                     for case in caseTree:
-                        self.dbgl(case)
-                    self.dbgl("----------------------")
+                        self.dbgl(case, DBG_LEVEL)
+                    self.dbgl("----------------------", DBG_LEVEL)
                 else:
                     #if (prepareDataNeeded):
                     #    test_params = oppmodify(test_params,opp(KEY_PREPAREDATA,'1'))
@@ -414,7 +427,7 @@ class PExecutor:
                 else:
                     skipDataPreparing = True
     
-            self.execLog.dbgl('skipDataPreparing=' + str(skipDataPreparing))
+            self.execLog.dbgl('skipDataPreparing=' + str(skipDataPreparing), DBG_LEVEL)
             if (skipDataPreparing):
                 for i in range(0, len(finalCaseList)):
                     finalCaseList[i] = oppmodify(finalCaseList[i],opp(KEY_PREPAREDATA,'0'))
@@ -422,7 +435,7 @@ class PExecutor:
             #test.setExecDir(execDir)
             finalCaseList = self.prepareChain(finalCaseList)
 
-            self.dbgl('Final test list: {0}'.format([oppval(P_KEY_TESTNAME, t) for t in finalCaseList]))
+            self.dbgl('Final test list: {0}'.format([oppval(P_KEY_TESTNAME, t) for t in finalCaseList]), DBG_LEVEL)
             if finalCaseList and len(finalCaseList)>0: 
                 lastTestName = oppval(P_KEY_TESTNAME, finalCaseList[-1],'None')
             else:
@@ -431,7 +444,7 @@ class PExecutor:
             for c in finalCaseList:
                 self.testlistLog.writeAsAppendLine(c, True)
             
-            result = self.executeChain(execDir, context, finalCaseList, modules = modules, tokenData = tokenData)
+            result = self.executeChain(execDir, context, finalCaseList, modules = modules, tokenData = tokenData, dbgLevel = DBG_LEVEL)
             
         elif command == P_KEY_FILTER or command == KEY_PLOT:
             if (inResultFile != None):
@@ -484,7 +497,7 @@ class PExecutor:
         return newTestChain
     
     # Returns last executed test if any
-    def executeChain(self, execDir, context, testchain, modules = [], tokenData = None):
+    def executeChain(self, execDir, context, testchain, modules = [], tokenData = None, dbgLevel = DBG_MEDIUM_LEVEL):
         
         test_counter = 0
         _TIME_totalChainExecution = time.time()
@@ -521,7 +534,7 @@ class PExecutor:
                 testExecDir = execDir
             else:
                 testExecDir = execDir +  P_DIR_SEP + test_name
-                self.dbgl('Create exec dir for test: ' + testExecDir)
+                self.dbgl('Create exec dir for test: ' + testExecDir, dbgLevel)
                 self.testExecDir.setPath(testExecDir)
                 self.testExecDir.createDirIfNone()
             
@@ -549,7 +562,7 @@ class PExecutor:
                 resFile.write(opp(P_KEY_TESTNAME, test_name) + P_PARAM_SEP)
                 resFile.close()
             else:
-                 self.dbgl('Result file not handled by Executor.. resultFileUse:{0}'.format(resultUse))
+                 self.dbgl('Result file not handled by Executor.. resultFileUse:{0}'.format(resultUse), dbgLevel)
             
             #modulesParam = oppval('modules', context)
             condMods = opplistvals(oppval('condMods', context))
@@ -585,8 +598,8 @@ class PExecutor:
 
                     if (modName != ''):
                         if (not modName in condMods) or (modName in acceptMods): 
-                            self.dbgl("RUN module:" + modName)
-                            self.dbgl("cwd:" + os.getcwd())
+                            self.dbgl("RUN module:" + modName, dbgLevel)
+                            self.dbgl("cwd:" + os.getcwd(), dbgLevel)
 
                             if moduleToLoadFromSource:
                                 module_exec_dir =  modules_dir + "/" + mod + "/"
@@ -624,19 +637,19 @@ class PExecutor:
 
                             init_func = module.get_func_init()
                             if init_func is not None:
-                                self.dbgl("Call module init by handler")
+                                self.dbgl("Call module init by handler", dbgLevel)
                                 init_func(module, test_name, context)
                             else:
-                                self.dbgl("Call module init by module method")
+                                self.dbgl("Call module init by module method", dbgLevel)
                                 module.init(test_name, context)
 
                             #test.addModule(module)  TODO-abak-test
                             exec_func = module.get_func_exec()
                             if exec_func is not None:
-                                self.dbgl("PExecutor::Call module exec by handler. Type of token {0}".format(type(tokenData)))
+                                self.dbgl("Call module exec by handler. Type of token {0}".format(type(tokenData)), dbgLevel)
                                 tokenData = exec_func(module, testParams, tokenData)
                             else:
-                                self.dbgl("PExecutor::Call module exec by module method. Type of token {0}".format(type(tokenData)))
+                                self.dbgl("Call module exec by module method. Type of token {0}".format(type(tokenData)), dbgLevel)
                                 tokenData = module.execute(testParams, tokenData)
 
                             test.setTokenData(tokenData)
@@ -676,6 +689,7 @@ class PExecutor:
         #self.summaryLog = PPath(rootSummaryFileName, "summary")
         #self.summaryLog.open('a')
         self.execLog = PLog("ex", execSummaryFileName)
+        self.execLog.LEVEL = DBG_LOW_LEVEL
         self.execLog.openLog()
 
         if (testListDir != None):
@@ -792,36 +806,39 @@ def isPrepareDataNeeded(key):
 def sortKeyForDirs(x):
 	return x.split('/')[-1][2:]
 
-def getDirnameForId(id):
-	return 'exec-' + str(id).zfill(3)
+def getDirnameForId(id, execdir_prefix = P_EXECDIR_PREFIX_DEFAULT):
+	return execdir_prefix + '-' + str(id).zfill(3)
 
 def getExecDirShortName(execDir):
 	return execDir.split('/')[-1]
 
 #returns pair [exec id exec_dir] 
-def createNewExecId(outDir):
-	dir_id = 0
+def createNewExecId(outDir, verbose = False, execdir_prefix = P_EXECDIR_PREFIX_DEFAULT, exactDirName = False):
+    ''' if exactDirName is True, it simpy uses execdir_prefix as dir name'''
+    dir_id = 0
 
-	if (not os.path.isdir(outDir)):
-		print ('medaap.Create' + outDir)
-		os.mkdir(outDir)
-		
-	dir_list = sorted(glob.glob(outDir + '/exec-*'), key=sortKeyForDirs)
-	dir_number = len(dir_list)
-	if (dir_number == 0):
-		dir_id = 1
-	else:
-		last_prev_dir = dir_list[dir_number - 1]
-		last_prev_id = getExecDirShortName(last_prev_dir)[5:]
-		dir_id = int(last_prev_id) + 1
+    if (not os.path.isdir(outDir)):
+        if verbose:    print ('Create' + outDir)
+        os.mkdir(outDir)
+
+    if not exactDirName:
+        dir_list = sorted(glob.glob(outDir + '/' + execdir_prefix + '-*'), key=sortKeyForDirs)
+        dir_number = len(dir_list)
+        if (dir_number == 0):
+            dir_id = 1
+        else:
+            last_prev_dir = dir_list[dir_number - 1]
+            last_prev_id = getExecDirShortName(last_prev_dir)[len(execdir_prefix)+1:] # len(execdir_prefix)+1 is len of 'exec-'
+            dir_id = int(last_prev_id) + 1
+        
+        new_dir = PPath(getDirnameForId(dir_id, execdir_prefix), parent=outDir)
+    else:
+        new_dir = PPath(execdir_prefix, parent=outDir)
 	
-	new_dir = outDir + '/' + getDirnameForId(dir_id)
-	
-	if (not os.path.isdir(new_dir)):
-		print('Create dir:' + new_dir)
-		os.mkdir(new_dir)
-	
-	return new_dir
+    if verbose:    print('Create dir (with removing old one if exeists):' + new_dir.getPath())
+    new_dir.createDirWithCleaning()
+
+    return new_dir.getPath()
 
 
 def closeSummaryFiles(outDirHandle, execDir):

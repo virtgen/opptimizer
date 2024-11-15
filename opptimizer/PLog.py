@@ -66,7 +66,7 @@ class PLog(PPath):
     
     # Prints regular log
     def dbg(self, object_to_write, dbgLevel=DBG_LOW_LEVEL, new_line=False):
-        if self.isActive() and dbgLevel >= self.LEVEL:
+        if self.isActive() and dbgLevel <= self.LEVEL:
             textToWrite = self.getPrefix() + object_to_write
             oppdbg(textToWrite)
             if new_line:
@@ -79,7 +79,7 @@ class PLog(PPath):
 
     # Prints WARNING log (as string)
     def wrn(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
-        if self.isActive() and dbgLevel >= self.LEVEL:
+        if self.isActive() and dbgLevel <= self.LEVEL:
             textToWrite = WARN_KEY + self.getPrefix() + ':' + object_to_write 
             oppdbg(textToWrite)
             if self.isOpened():
@@ -91,7 +91,7 @@ class PLog(PPath):
     
     # Prints ERROR log (as string)
     def err(self, object_to_write, dbgLevel=DBG_LOW_LEVEL):
-        if self.isActive() and dbgLevel >= self.LEVEL:
+        if self.isActive() and dbgLevel <= self.LEVEL:
             textToWrite = ERROR_KEY + self.getPrefix() + ':' + object_to_write 
             oppdbg(textToWrite)
             if self.isOpened():

@@ -205,6 +205,10 @@ class PModule(PExecutable):
         testExtecDir = self.getCurrentTest().getTestExecDir()
         if context != None  and testExtecDir != None:
             inputPath = oppval('din', context)
+            
+            if inputPath == None:
+                inputPath = PPath(P_DIN_DEFAULT, parent='.').getPath()
+
             if (inputPath == '__cap'):
                 resolvedInputPath = PPath(testExtecDir + P_DIR_SEP + 'cap')
             else:
@@ -242,8 +246,8 @@ class PModule(PExecutable):
         #if execDir != None:
         #    executionParams = oppmodify(executionParams, opp("resultFile", execDir + P_DIR_SEP + DP_RESULT_FILENAME))
         
-        self.dbgl(self.name + ".execute().context: " + self.getContext())
-        self.dbgl(self.name + ".execute().params: " + params)
+        self.dbgl(self.name + ".execute().context: " + self.getContext(), DBG_MEDIUM_LEVEL)
+        self.dbgl(self.name + ".execute().params: " + params, DBG_MEDIUM_LEVEL)
         
         self.resolveInputPath()
         
@@ -266,7 +270,7 @@ class PModule(PExecutable):
             self.dbgopen()
             self.dbgl("module " + self.name +  " exe finished with return " + str(self.getExecResult()))
         else:
-            self.dbgl("Native execution skipped for module " + self.name)
+            self.dbgl("Native execution skipped for module " + self.name, DBG_HIGH_LEVEL)
             
         
         

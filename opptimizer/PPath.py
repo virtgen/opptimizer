@@ -315,7 +315,7 @@ class PPath(PObject):
         def parseCfgFile(self):
             context = ''
     
-            oppdbg("ppath::parseCfgFile:" + self.getPath())
+            #oppdbg("ppath::parseCfgFile:" + self.getPath())
           
             if self.exists():
                 
@@ -333,7 +333,7 @@ class PPath(PObject):
                 oppdbg(WARN_KEY + 'ppath::parseCfgFile: path not exists:' + self.getPath())
 
                 
-            oppdbg("ppath::parseCfgFile: context from cfg:" + context)   
+            #oppdbg("ppath::parseCfgFile: context from cfg:" + context)   
             
             return context 
 
@@ -355,11 +355,11 @@ class PPath(PObject):
             path = default
             if self.path:
                 parentDeep = os.path.sep.join(['..'] * parentLevel)
-                path = Path(self.path).parent / parentDeep
+                path = Path(self.path) / parentDeep
                 path = os.path.normpath(path)
             return path
         
         def getParent(self):
             ''' Resturn direct parent '''
-            return self.getDeepParent(0)
+            return self.getDeepParent(1)
         

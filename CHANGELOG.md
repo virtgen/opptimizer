@@ -1,5 +1,8 @@
 # Release Notes
 
+[2.3.5] - 2024-11-16<br>
+- verbose mode introduced in Executor, exec dirs managament, verbose mode
+
 [2.3.4] - 2024-11-11<br>
 - Fixed path resolving, fixed executor run scope unpacking
 

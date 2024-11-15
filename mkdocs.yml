@@ -6,6 +6,7 @@ nav:
     - Execution Modes: exec-modes.md
     - Results from execution: results.md
     - Execution parameters: exec-params.md
+    - Directories management: dirs-management.md
   - Advanced Topics:
     - Context Management: context-management.md
     - Local installation: advanced-installation.md

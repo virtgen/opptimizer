@@ -50,14 +50,17 @@ class PModulePy(PModule):
                 if inputPath.exists():
                     files = inputPath.getDirFiles(pattern = data_pattern,
                         prefix = data_prefix, postfix = data_postfix, key = PPath.sortByPaths)
-                    for f in files:
-                        onprocess_func = self.get_func_onprocess()
-                        if onprocess_func is not None:
-                            self.dbgl("Call module onprocess_func by handler. Type of token {0}".format(type(tokenData)))
-                            tokenData = onprocess_func(self, f, params, tokenData)
-                        else:
-                            self.dbgl("Call module onprocess_func by module method. Type of token {0}".format(type(tokenData)))
-                            tokenData = self.onFileProcess(f, params, tokenData)
+                    if len(files) > 0:
+                        for f in files:
+                            onprocess_func = self.get_func_onprocess()
+                            if onprocess_func is not None:
+                                self.dbgl("Call module onprocess_func by handler. Type of token {0}".format(type(tokenData)))
+                                tokenData = onprocess_func(self, f, params, tokenData)
+                            else:
+                                self.dbgl("Call module onprocess_func by module method. Type of token {0}".format(type(tokenData)))
+                                tokenData = self.onFileProcess(f, params, tokenData)
+                    else:
+                        self.dbgl(f"No input files found in {inputPath.getPath()}")
                 else:
                     self.errl('PModulePy::exceute: Input path not exists: ' + str(inputPath.getPath()))
             else:
