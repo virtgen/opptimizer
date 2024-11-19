@@ -251,8 +251,9 @@ class PModule(PExecutable):
         
         self.resolveInputPath()
         
-        writeTestNameToResult = oppval(KEY_WRITE_TESTNAME_TO_RESLT, params)
-        if writeTestNameToResult == '1':
+        writeTestNameToResult = oppvalbool(KEY_WRITE_TESTNAME_TO_RESULT, params)
+        
+        if writeTestNameToResult:
             self.resultFileOpen()
             if (self.resultFile != None and not self.resultFile.isEmpty()):
                 self.writeToResultFile('\n')

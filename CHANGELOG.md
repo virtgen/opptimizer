@@ -1,5 +1,8 @@
 # Release Notes
 
+[2.3.6] - 2024-11-19<br>
+- Token class added for tokenData param in module
+
 [2.3.5] - 2024-11-16<br>
 - verbose mode introduced in Executor, exec dirs managament, verbose mode
 

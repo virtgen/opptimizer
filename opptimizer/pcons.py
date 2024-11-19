@@ -77,7 +77,7 @@ P_KEY_FILTER = 'filter'
 KEY_PREPAREDATA = 'PrepareData'
 
 
-KEY_WRITE_TESTNAME_TO_RESLT = "testNameInResulfFile"
+KEY_WRITE_TESTNAME_TO_RESULT = "testNameInResulfFile"
 
 KEY_PLOT = 'plot'
 KEY_PRECISION = 'precision'
