@@ -646,7 +646,6 @@ class PExecutor:
                             #test.addModule(module)  TODO-abak-test
                             exec_func = module.get_func_exec()
                             if exec_func is not None:
-                                if 
                                 self.dbgl("Call module exec by handler. Type of token {0}".format(type(tokenData)), dbgLevel)
                                 tokenData = exec_func(module, testParams, tokenData)
                             else:

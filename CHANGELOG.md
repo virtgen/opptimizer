@@ -1,5 +1,8 @@
 # Release Notes
 
+[2.3.7] - 2024-11-22<br>
+- Fixed syntax error in PExecutor
+
 [2.3.6] - 2024-11-19<br>
 - Token class added for tokenData param in module
 
