@@ -11,7 +11,7 @@
 
 ### `Mod`
 
-::: opptimizer.Mod.Mod
+::: opptimizer.Mod
     handler: python
     options:
       show_source: false
@@ -19,7 +19,7 @@
 
 ### `PPath`
 
-::: opptimizer.PPath.PPath
+::: opptimizer.PPath
     handler: python
     options:
       show_source: false
