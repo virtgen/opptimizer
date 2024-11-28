@@ -17,6 +17,7 @@ from .PPath import PPath
 from .Token import Token
 from .Mod import Mod
 from .Executor import Executor
+from .pmodutils import *
 
 from .__about__ import (
     __version__,

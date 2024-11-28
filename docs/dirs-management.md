@@ -49,14 +49,14 @@ This function is designed to clear the output directory before pipeline executio
    This example removes only two directories `exec-001` and `exec-002`:
 
 ```python
-   executor.run('Results: ', context='clean=True;cleanInclude=exec-001,exec-001')
+   executor.run('Results: ', context='clean=True;cleanInclude=001,001')
 ```
    This will ensure that only `exec-001` is removed, while other directories remain untouched.
 
 2. **Remove All Directories Except One**  
    This example removes all directories except `exec-002`:
 ```python
-   executor.run('Results: ', context='clean=True;cleanExclude=exec-002')
+   executor.run('Results: ', context='clean=True;cleanExclude=002')
 ```
    This will remove all directories matching the `exec-XXX` schema, except for `exec-002`, which is preserved.
 

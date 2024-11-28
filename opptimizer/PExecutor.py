@@ -152,6 +152,13 @@ class PExecutor:
         
         directories_to_clean = opptolist('cleanInclude', parmsUnion, default = None)
         directories_to_exclude  = opptolist('cleanExclude', parmsUnion, default = None)
+
+        if directories_to_clean is not None:
+            directories_to_clean = [getExecDirForId(id, execdir_prefix) for id in directories_to_clean]
+        if directories_to_exclude  is not None:
+            directories_to_exclude = [getExecDirForId(id, execdir_prefix) for id in directories_to_exclude]
+
+            
         if verbose:
             print("cleanExecDirs, path_to_clean:{0}, include:{1}, exclue:{2}".format(path_to_clean, directories_to_clean, directories_to_exclude))
         self.remove_selected_dirs(path_to_clean, directories_to_clean, directories_to_exclude, verbose=verbose, execdir_prefix = execdir_prefix)
@@ -806,12 +813,6 @@ def isPrepareDataNeeded(key):
 def sortKeyForDirs(x):
 	return x.split('/')[-1][2:]
 
-def getDirnameForId(id, execdir_prefix = P_EXECDIR_PREFIX_DEFAULT):
-	return execdir_prefix + '-' + str(id).zfill(3)
-
-def getExecDirShortName(execDir):
-	return execDir.split('/')[-1]
-
 #returns pair [exec id exec_dir] 
 def createNewExecId(outDir, verbose = False, execdir_prefix = P_EXECDIR_PREFIX_DEFAULT, exactDirName = False):
     ''' if exactDirName is True, it simpy uses execdir_prefix as dir name'''
@@ -831,7 +832,7 @@ def createNewExecId(outDir, verbose = False, execdir_prefix = P_EXECDIR_PREFIX_D
             last_prev_id = getExecDirShortName(last_prev_dir)[len(execdir_prefix)+1:] # len(execdir_prefix)+1 is len of 'exec-'
             dir_id = int(last_prev_id) + 1
         
-        new_dir = PPath(getDirnameForId(dir_id, execdir_prefix), parent=outDir)
+        new_dir = PPath(getExecDirForId(dir_id, execdir_prefix), parent=outDir)
     else:
         new_dir = PPath(execdir_prefix, parent=outDir)
 	

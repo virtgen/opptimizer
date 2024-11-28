@@ -1,5 +1,8 @@
 # Release Notes
 
+[2.3.8] - 2024-11-28<br>
+- Added mod utils, added removeDir in PPath,shortened exec dir management
+
 [2.3.7] - 2024-11-22<br>
 - Fixed syntax error in PExecutor
 

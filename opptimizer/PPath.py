@@ -148,6 +148,12 @@ class PPath(PObject):
             else:
                 oppdbg(ERROR_KEY + ':PPath(' + self.name  + ").createDirIfNone(): path is None \n")
         
+        # Removes dir
+        def removeDir(self):
+            if (os.path.isdir(self.path)):
+                shutil.rmtree(self.path)
+
+                
         # Creates directory for this path even if exists or is not empty.
         # Removes all content if existing directory is not empty.
         def createDirWithCleaning(self):

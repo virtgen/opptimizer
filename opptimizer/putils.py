@@ -218,3 +218,14 @@ def getPatternFiles(pattern, exec_dir, output_dir):
     path = os.path.normpath(os.path.join(realParent, pattern))
     return (path, targetPattern)
 
+def getExecDirForId(id, execdir_prefix = P_EXECDIR_PREFIX_DEFAULT):
+	return execdir_prefix + '-' + str(id).zfill(3)
+
+def getExecDirShortName(execDir):
+	return execDir.split('/')[-1]
+
+def getExecDirByID(din, execdir_prefix, id):
+    ''' Returns path to exec dir for given din, execdir_prefix and id of exec dir  '''
+    path = Path(din) / getExecDirForId(id,execdir_prefix)
+    return str(path)
+
